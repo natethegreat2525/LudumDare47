@@ -137,13 +137,19 @@ export default class World {
     }
 }
 
+const loader = new THREE.TextureLoader();
+const dirtTexture = loader.load('http://localhost:3000/Basic_Ground_Filler_Pixel.png');
+dirtTexture.flipY = false;
+const topTexture = loader.load('http://localhost:3000/Basic_Ground_Top_Pixel.png');
+topTexture.flipY = false;
+ 
 const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
-        color: 0x543210,
+        map: dirtTexture,
         side: THREE.BackSide,
     }),
     grass: new THREE.MeshBasicMaterial({
-        color: 0x228822,
+        map: topTexture,
         side: THREE.BackSide,
     }),
 };
