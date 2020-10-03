@@ -4,6 +4,7 @@ import Sprite from './sprite';
 import Player from './player';
 import { Vector2 } from 'three';
 import Button from './button';
+import CrumbleBlock from './crumbleblock';
 
 const BLOCK_WIDTH = 32;
 const GRAVITY = 0.7;
@@ -26,6 +27,9 @@ export default class World {
         this.addEntity(this.player);
 
         this.addEntity(new Button(new THREE.Vector2(BLOCK_WIDTH * 10.5, BLOCK_WIDTH*20.5)));
+        for (let i = 0; i < 5; i++) {
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (15.5-i), BLOCK_WIDTH*17.5)));
+        }
         this.loadMap();
     }
 
@@ -124,6 +128,14 @@ export default class World {
                         }
                     }
                 }
+            }
+        }
+
+        for (let i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].deleteFlag) {
+                this.entities[i].tearDown(this);
+                this.entities.splice(i, 1);
+                i--;
             }
         }
     }
