@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
+import { BLOCK_WIDTH } from './constants';
 
 const crumbleBlockMaterial = new THREE.MeshBasicMaterial({
     color: 0xff00ff,
@@ -12,17 +13,18 @@ const crumbleBlockMaterialCracked = new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
 });
 
-const crumbleBlockGeometry = new THREE.PlaneGeometry(32, 32);
+const crumbleBlockGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH, BLOCK_WIDTH);
 
 export default class CrumbleBlock {
     constructor(pos) {
         this.type = 'crumbleblock';
         this.pos = pos;
+        this.physics = true;
         this.dynamic = false;
         this.solid = true;
         this.deleteFlag = false;
         this.sprite = new Sprite(crumbleBlockMaterial, crumbleBlockGeometry);
-        this.collisionSize = new THREE.Vector2(32, 32);
+        this.collisionSize = new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH);
         this.crumbleState = 0;
     }
 

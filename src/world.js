@@ -5,9 +5,9 @@ import Player from './player';
 import { Vector2 } from 'three';
 import Button from './button';
 import CrumbleBlock from './crumbleblock';
-
-const BLOCK_WIDTH = 32;
-const GRAVITY = 0.7;
+import { spriteMaterials } from './materials';
+import Foreground from './foregroundlayer';
+import { BLOCK_WIDTH, GRAVITY } from './constants';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -26,11 +26,13 @@ export default class World {
 
         this.addEntity(this.player);
 
-        this.addEntity(new Button(new THREE.Vector2(BLOCK_WIDTH * 10.5, BLOCK_WIDTH*20.5)));
+        this.addEntity(new Button(new THREE.Vector2(BLOCK_WIDTH * 10.5, BLOCK_WIDTH*17.5)));
         for (let i = 0; i < 5; i++) {
-            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (15.5-i), BLOCK_WIDTH*17.5)));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (15.5-i), BLOCK_WIDTH*14.5)));
         }
         this.loadMap();
+
+        this.addEntity(new Foreground(this.width, this.height));
     }
 
     addEntity(entity) {
@@ -42,7 +44,7 @@ export default class World {
         for (let entity of this.entities) {
             entity.update(this, dt);
 
-            if (entity.dynamic) {
+            if (entity.dynamic && entity.physics) {
                 entity.forces.y += GRAVITY;
                 entity.pos.add(entity.vel.clone().multiplyScalar(dt));
                 entity.vel.add(entity.forces.multiplyScalar(dt));
@@ -51,7 +53,7 @@ export default class World {
                 entity.grounded = false;
 
                 for (let staticEnt of this.entities) {
-                    if (staticEnt.dynamic) {
+                    if (staticEnt.dynamic || !staticEnt.physics) {
                         continue;
                     }
                     let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)), true);
@@ -217,18 +219,3 @@ export default class World {
         renderer.render(this.scene, this.camera);
     }
 }
-
-const spriteMaterials = {
-    dirt: new THREE.MeshBasicMaterial({
-        color: 0x543210,
-        side: THREE.BackSide,
-    }),
-    grass: new THREE.MeshBasicMaterial({
-        color: 0x228822,
-        side: THREE.BackSide,
-    }),
-    button: new THREE.MeshBasicMaterial({
-        color: 0x0000ff,
-        side: THREE.BackSide,
-    }),
-};

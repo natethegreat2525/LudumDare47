@@ -14,6 +14,7 @@ export default class Player {
     constructor(pos) {
         this.type = 'player';
         this.pos = pos;
+        this.physics = true;
         this.dynamic = true;
         this.vel = new THREE.Vector2(0, 2);
         this.forces = new THREE.Vector2(0, 0);
