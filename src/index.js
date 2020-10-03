@@ -1,17 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import * as THREE from 'three';
+import World from './world';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const canvas = document.getElementById("game-canvas");
+const renderer = new THREE.WebGLRenderer({canvas});
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const world = new World(canvas.width, canvas.height);
+
+function render() {
+  for (let i = 0; i < 10; i++) {
+    world.update(.1);
+  }
+  world.render(renderer);
+  requestAnimationFrame(render);
+}
+
+render();
