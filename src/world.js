@@ -2,8 +2,12 @@ import * as THREE from 'three';
 import { smallMapGrid } from './map';
 import Sprite from './sprite';
 import Player from './player';
+import { Vector2 } from 'three';
+import Button from './button';
 
 const BLOCK_WIDTH = 32;
+const GRAVITY = 0.7;
+
 export default class World {
     constructor(cwidth, cheight) {
         this.width = 120;
@@ -21,6 +25,7 @@ export default class World {
 
         this.addEntity(this.player);
 
+        this.addEntity(new Button(new THREE.Vector2(BLOCK_WIDTH * 10.5, BLOCK_WIDTH*20.5)));
         this.loadMap();
     }
 
@@ -33,71 +38,135 @@ export default class World {
         for (let entity of this.entities) {
             entity.update(this, dt);
 
-            // collide with grid
-            let upCorner = entity.pos.clone().add(entity.collisionSize.clone().multiplyScalar(.5)).divideScalar(BLOCK_WIDTH).floor();
-            let lowCorner = entity.pos.clone().sub(entity.collisionSize.clone().multiplyScalar(.5)).divideScalar(BLOCK_WIDTH).floor();
-            let startX = lowCorner.x;
-            let startY = lowCorner.y;
-            let endX = upCorner.x;
-            let endY = upCorner.y;
-            let stepX = 1;
-            let stepY = 1;
-            if (entity.vel.x < 0) {
-                let tmp = startX;
-                startX = endX;
-                endX = tmp;
-                stepX = -1;
-                endX--;
-            } else {
-                endX++;
-            }
-            if (entity.vel.y < 0) {
-                let tmp = startY;
-                startY = endY;
-                endY = tmp;
-                stepY = -1;
-                endY--;
-            } else {
-                endY++;
-            }
-            const xRad = (BLOCK_WIDTH + entity.collisionSize.x) * .5;
-            const yRad = (BLOCK_WIDTH + entity.collisionSize.y) * .5;
-            entity.grounded = false;
-            for (let x = startX; x != endX; x += stepX) {
-                for (let y = startY; y != endY; y += stepY) {
-                    if (this.grid[x + y*this.width] !== ' ') {
-                        let xDiff = entity.pos.x - (x*BLOCK_WIDTH + BLOCK_WIDTH/2);
-                        let yDiff = entity.pos.y - (y*BLOCK_WIDTH + BLOCK_WIDTH/2);
-                        if (Math.abs(xDiff) < xRad && Math.abs(yDiff) < yRad) {
-                            if (Math.abs(xDiff) - xRad > Math.abs(yDiff) - yRad) {
-                                yDiff = yRad;
-                            } else {
-                                xDiff = xRad;
+            if (entity.dynamic) {
+                entity.forces.y += GRAVITY;
+                entity.pos.add(entity.vel.clone().multiplyScalar(dt));
+                entity.vel.add(entity.forces.multiplyScalar(dt));
+                entity.forces = new THREE.Vector2(0, 0);
+
+                entity.grounded = false;
+
+                for (let staticEnt of this.entities) {
+                    if (staticEnt.dynamic) {
+                        continue;
+                    }
+                    let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)), true);
+                    if (diff) {
+                        staticEnt.collide(entity, diff.clone().multiplyScalar(-1));
+                        entity.collide(staticEnt, diff.clone());
+                        if (staticEnt.solid) {
+                            entity.pos.add(diff);
+                            if (diff.y < 0) {
+                                entity.vel.y = Math.min(0, entity.vel.y);
+                                entity.grounded = true;
                             }
-                            
-                            
-                            if (Math.abs(xDiff) < xRad) {
-                                if (xDiff > 0) {
-                                    entity.pos.x -= xDiff - xRad;
-                                    entity.vel.x = Math.max(0, entity.vel.x);
-                                } else {
-                                    entity.pos.x -= xDiff + xRad;
+                            if (diff.y > 0) {
+                                entity.vel.y = Math.max(0, entity.vel.y);
+                            }
+                            if (diff.x < 0) {
+                                entity.vel.x = Math.min(0, entity.vel.x);
+                            }
+                            if (diff.x > 0) {
+                                entity.vel.x = Math.max(0, entity.vel.x);
+                            }
+                        }
+                    }
+                }
+
+                // collide with grid
+                let upCorner = entity.pos.clone().add(entity.collisionSize.clone().multiplyScalar(.5)).divideScalar(BLOCK_WIDTH).floor();
+                let lowCorner = entity.pos.clone().sub(entity.collisionSize.clone().multiplyScalar(.5)).divideScalar(BLOCK_WIDTH).floor();
+                let startX = lowCorner.x;
+                let startY = lowCorner.y;
+                let endX = upCorner.x;
+                let endY = upCorner.y;
+                let stepX = 1;
+                let stepY = 1;
+                if (entity.vel.x < 0) {
+                    let tmp = startX;
+                    startX = endX;
+                    endX = tmp;
+                    stepX = -1;
+                    endX--;
+                } else {
+                    endX++;
+                }
+                if (entity.vel.y < 0) {
+                    let tmp = startY;
+                    startY = endY;
+                    endY = tmp;
+                    stepY = -1;
+                    endY--;
+                } else {
+                    endY++;
+                }
+                
+                for (let x = startX; x != endX; x += stepX) {
+                    for (let y = startY; y != endY; y += stepY) {
+                        if (this.grid[x + y*this.width] !== ' ') {
+                            let diff = this.boxCollide(entity, new Vector2(x*BLOCK_WIDTH, y*BLOCK_WIDTH), new Vector2((x+1)*BLOCK_WIDTH, (y+1)*BLOCK_WIDTH));
+                            if (diff) {
+                                entity.pos.add(diff);
+                                if (diff.y < 0) {
+                                    entity.vel.y = Math.min(0, entity.vel.y);
+                                    entity.grounded = true;
+                                }
+                                if (diff.y > 0) {
+                                    entity.vel.y = Math.max(0, entity.vel.y);
+                                }
+                                if (diff.x < 0) {
                                     entity.vel.x = Math.min(0, entity.vel.x);
                                 }
-                            }
-                            
-                            if (Math.abs(yDiff) < yRad) {
-                                if (yDiff > 0) {
-                                    entity.pos.y -= yDiff - yRad;
-                                    entity.vel.y = Math.max(0, entity.vel.y);
-                                } else {
-                                    entity.grounded = true;
-                                    entity.pos.y -= yDiff + yRad;
-                                    entity.vel.y = Math.min(0, entity.vel.y);
+                                if (diff.x > 0) {
+                                    entity.vel.x = Math.max(0, entity.vel.x);
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    boxCollide(entity, lowCorner, highCorner, debug) {
+        const xRad = (BLOCK_WIDTH + entity.collisionSize.x) * .5;
+        const yRad = (BLOCK_WIDTH + entity.collisionSize.y) * .5;
+
+        let xDiff = entity.pos.x - (lowCorner.x + highCorner.x)/2;
+        let yDiff = entity.pos.y - (lowCorner.y + highCorner.y)/2;
+        if (debug) {
+            //console.log(entity.pos, lowCorner);
+        }
+        if (Math.abs(xDiff) < xRad && Math.abs(yDiff) < yRad) {
+            if (Math.abs(xDiff) - xRad > Math.abs(yDiff) - yRad) {
+                yDiff = yRad;
+            } else {
+                xDiff = xRad;
+            }
+            
+            
+            if (Math.abs(xDiff) < xRad) {
+                if (xDiff > 0) {
+                    return new THREE.Vector2(xRad - xDiff, 0)
+                    entity.pos.x -= xDiff - xRad;
+                    entity.vel.x = Math.max(0, entity.vel.x);
+                } else {
+                    return new THREE.Vector2(-xRad - xDiff, 0)
+                    entity.pos.x -= xDiff + xRad;
+                    entity.vel.x = Math.min(0, entity.vel.x);
+                }
+            }
+            
+            if (Math.abs(yDiff) < yRad) {
+                if (yDiff > 0) {
+                    return new THREE.Vector2(0, yRad - yDiff);
+                    entity.pos.y -= yDiff - yRad;
+                    entity.vel.y = Math.max(0, entity.vel.y);
+                } else {
+                    return new THREE.Vector2(0, -yRad - yDiff);
+                    entity.grounded = true;
+                    entity.pos.y -= yDiff + yRad;
+                    entity.vel.y = Math.min(0, entity.vel.y);
                 }
             }
         }
@@ -128,7 +197,7 @@ export default class World {
 
     addSpriteToGrid(sprite, x, y) {
         this.spriteGrid[x + y*this.width] = sprite;
-        sprite.mesh.position.set(x * BLOCK_WIDTH + BLOCK_WIDTH/2, y * BLOCK_WIDTH + BLOCK_WIDTH/2, 0);
+        sprite.mesh.position.set(x * BLOCK_WIDTH + BLOCK_WIDTH/2, y * BLOCK_WIDTH + BLOCK_WIDTH/2, -1);
         this.scene.add(sprite.mesh);
     }
 
@@ -146,8 +215,8 @@ const spriteMaterials = {
         color: 0x228822,
         side: THREE.BackSide,
     }),
+    button: new THREE.MeshBasicMaterial({
+        color: 0x0000ff,
+        side: THREE.BackSide,
+    }),
 };
-
-function genDirtSprite() {
-
-}
