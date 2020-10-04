@@ -2,11 +2,7 @@ import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
-
-const buttonMaterial = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
-    side: THREE.BackSide,
-});
+import { spriteMaterials } from './materials';
 
 export default class Button {
     constructor(pos, size) {
@@ -17,13 +13,20 @@ export default class Button {
         this.solid = true;
         this.deleteFlag = false;
         this.geometry = new THREE.PlaneGeometry(size.x, size.y);
-        this.sprite = new Sprite(buttonMaterial, this.geometry);
+        let uvs = this.geometry.faceVertexUvs[0];
+        uvs[0][0].set(0,1);
+        uvs[0][1].set(0,0);
+        uvs[0][2].set(size.x/(5*BLOCK_WIDTH),1);
+        uvs[1][0].set(0,0);
+        uvs[1][1].set(size.x/(5*BLOCK_WIDTH),0);
+        uvs[1][2].set(size.x/(5*BLOCK_WIDTH),1);
+        this.sprite = new Sprite(spriteMaterials.button, this.geometry);
         this.collisionSize = size;
         this.offset = 0;
     }
 
     update(world, dt) {
-        this.sprite.mesh.position.set(this.pos.x, this.pos.y-1, 0);
+        this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
     }
 
     init(world) {

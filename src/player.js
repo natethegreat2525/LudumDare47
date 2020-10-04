@@ -7,7 +7,7 @@ import { footstepSound } from './sounds';
 
 const loader = new THREE.TextureLoader();
 
-const playerIdleSprite = loader.load('http://localhost:3000/player-idle.png');
+const playerIdleSprite = loader.load('./player-idle.png');
 playerIdleSprite.flipY = false;
 const playerIdleMaterial = new THREE.MeshBasicMaterial({
     map: playerIdleSprite,
@@ -15,7 +15,7 @@ const playerIdleMaterial = new THREE.MeshBasicMaterial({
     transparent: true,
 });
 
-const playerRunSprite = loader.load('http://localhost:3000/player-running.png');
+const playerRunSprite = loader.load('./player-running.png');
 playerRunSprite.flipY = false;
 const playerRunMaterial = new THREE.MeshBasicMaterial({
     map: playerRunSprite,
@@ -23,7 +23,7 @@ const playerRunMaterial = new THREE.MeshBasicMaterial({
     transparent: true,
 });
 
-const playerJumpSprite = loader.load('http://localhost:3000/player-jump.png');
+const playerJumpSprite = loader.load('./player-jump.png');
 playerJumpSprite.flipY = false;
 const playerJumpMaterial = new THREE.MeshBasicMaterial({
     map: playerJumpSprite,

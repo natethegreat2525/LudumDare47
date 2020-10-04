@@ -62,9 +62,15 @@ export default class World {
             this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (43.5+i), BLOCK_WIDTH * (42.5))))
         }
 
+        //level 3 tree vines
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (68.5), BLOCK_WIDTH * (19.5))))
+
+
         //grass crumble blocks
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5)));
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5)));
+
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (82.5), BLOCK_WIDTH*47.5)));
 
         this.loadMap();
 
@@ -118,6 +124,7 @@ export default class World {
                                 if (staticEnt.solid) {
                                     entity.pos.add(diff);
                                     if (diff.y < 0) {
+                                        entity.pos.y += .01;
                                         entity.vel.y = Math.min(0, entity.vel.y);
                                         entity.grounded = true;
                                     }
