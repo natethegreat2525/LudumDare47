@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
+import { footstepSound } from './sounds';
 
 
 const playerMaterial = new THREE.MeshBasicMaterial({
@@ -26,11 +27,18 @@ export default class Player {
 
         this.climbing = false;
         this.isOnVine = false;
+
+        this.wasGrounded = false;
     }
 
     update(world, dt) {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
 
+        if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
+            if (footstepSound.paused) {
+                footstepSound.play();
+            }
+        }
         this.vel.x = 0;
         if (Key.isDown(Key.RIGHT)) {
             this.vel.x = 4;
@@ -58,6 +66,7 @@ export default class Player {
                 this.vel.y = -15;
             }
         }
+        this.wasGrounded = this.grounded;
         this.isOnVine = false;
     }
 

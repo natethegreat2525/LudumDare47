@@ -10,6 +10,7 @@ import { spriteMaterials } from './materials';
 import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
+import { forestBackgroundSound } from './sounds';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -44,7 +45,9 @@ export default class World {
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 25.5, BLOCK_WIDTH*20.5)));
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 7.5, BLOCK_WIDTH*4.5)));
 
-
+        setTimeout(() => {
+            forestBackgroundSound.play();
+        }, 1000);
     }
 
     addEntity(entity) {
@@ -135,6 +138,7 @@ export default class World {
                             if (diff) {
                                 entity.pos.add(diff);
                                 if (diff.y < 0) {
+                                    entity.pos.y += .01
                                     entity.vel.y = Math.min(0, entity.vel.y);
                                     entity.grounded = true;
                                 }
