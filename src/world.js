@@ -55,12 +55,12 @@ export default class World {
         // reveals level 2 entrance
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 69.5, BLOCK_WIDTH*33.5), new THREE.Vector2(BLOCK_WIDTH*7, BLOCK_WIDTH*5), () => {
             return new THREE.Vector2(0, l2button.offset > 0 ? 100000 : 0);
-        }));
+        }, spriteMaterials.dirt5Tall));
 
         //dir crumble blocks under first mountain
         for (let i = 0; i < 7; i++) {
-            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*36.5)));
-            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*37.5)));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*36.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*37.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
         }
 
         //vines for level 3
@@ -76,11 +76,11 @@ export default class World {
 
 
         //grass crumble blocks
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5)));
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5)));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5), spriteMaterials.grassCracked, spriteMaterials.grassCracked2));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5), spriteMaterials.grassCracked, spriteMaterials.grassCracked2));
 
         // behind level 4?
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (82.5), BLOCK_WIDTH*47.5)));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (82.5), BLOCK_WIDTH*47.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
 
         // blue flower control door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 113.5, BLOCK_WIDTH*23), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {

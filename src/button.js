@@ -42,13 +42,11 @@ export default class Button {
     }
 
     collide(other, diff) {
-        if (other.type == 'player' && diff.y > 0) {
+        if (other.type == 'player' && diff.y > 0 && other.vel.y >= 0) {
             this.pos.y += .1;
             this.offset += .1;
-        } 
-        if (Math.floor(diff.y) == 0 && !this.playedOnce) {
             this.collided =  true
-        }
+        } 
     }
 
     tearDown(world) {

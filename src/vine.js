@@ -22,7 +22,7 @@ export default class Vine {
     update(world, dt) {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, -2);
         let size = BLOCK_WIDTH/2;
-        let theta = Math.cos(this.dt * 0.1);
+        let theta = Math.cos(this.dt * 0.1 + this.pos.x);
         this.dt += dt;
         this.geometry.vertices[0].set(-size+theta, size, 0);
         this.geometry.vertices[1].set(size+theta, size, 0);

@@ -5,6 +5,8 @@ const dirtTexture = loader.load('./Basic_Ground_Filler_Pixel.png');
 dirtTexture.flipY = false;
 const dirtCrackedTexture = loader.load('./Basic_Ground_Filler_Cracked.png');
 dirtCrackedTexture.flipY = false;
+const dirtCrackedTexture2 = loader.load('./Basic_Ground_Filler_Cracked2.png');
+dirtCrackedTexture2.flipY = false;
 const topTexture = loader.load('./Basic_Ground_Top_Pixel.png');
 topTexture.flipY = false;
 const buttonTexture = loader.load('./Basic_Ground_Top_Pixel_Button.png');
@@ -13,6 +15,8 @@ buttonTexture.repeat.set(5, 1);
 buttonTexture.wrapS = THREE.RepeatWrapping;
 const topCrackedTexture = loader.load('./Basic_Ground_Top_Cracked.png');
 topCrackedTexture.flipY = false;
+const topCrackedTexture2 = loader.load('./Basic_Ground_Top_Cracked2.png');
+topCrackedTexture2.flipY = false;
 const grassTexture = loader.load('./grass.png');
 grassTexture.flipY = false;
 const blueFlower = loader.load('./blue_flower.png');
@@ -31,6 +35,11 @@ const vine = loader.load('./vine.png');
 vine.flipY = false;
 const defaultDoor = loader.load('./door.png');
 defaultDoor.flipY = false;
+const dirt5Tall = loader.load('./dirt_5.png');
+dirt5Tall.flipY = false;
+dirt5Tall.repeat.set(7,1);
+dirt5Tall.wrapS = THREE.RepeatWrapping;
+
 
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
@@ -49,8 +58,16 @@ export const spriteMaterials = {
         map: dirtCrackedTexture,
         side: THREE.BackSide,
     }),
+    dirtCracked2: new THREE.MeshBasicMaterial({
+        map: dirtCrackedTexture2,
+        side: THREE.BackSide,
+    }),
     grassCracked: new THREE.MeshBasicMaterial({
         map: topCrackedTexture,
+        side: THREE.BackSide,
+    }),
+    grassCracked2: new THREE.MeshBasicMaterial({
+        map: topCrackedTexture2,
         side: THREE.BackSide,
     }),
     grassEnt: new THREE.MeshBasicMaterial({
@@ -96,6 +113,11 @@ export const spriteMaterials = {
     defaultDoor: new THREE.MeshBasicMaterial({
         transparent: true,
         map: defaultDoor,
+        side: THREE.BackSide,
+    }),
+    dirt5Tall: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: dirt5Tall,
         side: THREE.BackSide,
     }),
 };
