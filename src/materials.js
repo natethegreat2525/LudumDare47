@@ -13,7 +13,14 @@ buttonTexture.repeat.set(5, 1);
 buttonTexture.wrapS = THREE.RepeatWrapping;
 const topCrackedTexture = loader.load('./Basic_Ground_Top_Cracked.png');
 topCrackedTexture.flipY = false;
-
+const grassTexture = loader.load('./grass.png');
+grassTexture.flipY = false;
+const blueFlower = loader.load('./blue_flower.png');
+blueFlower.flipY = false;
+const redFlower = loader.load('./red_flower.png');
+redFlower.flipY = false;
+const yellowFlower = loader.load('./yellow_flower.png');
+yellowFlower.flipY = false;
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
         map: dirtTexture,
@@ -33,6 +40,26 @@ export const spriteMaterials = {
     }),
     grassCracked: new THREE.MeshBasicMaterial({
         map: topCrackedTexture,
+        side: THREE.BackSide,
+    }),
+    grassEnt: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: grassTexture,
+        side: THREE.BackSide,
+    }),
+    yellowFlower: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: yellowFlower,
+        side: THREE.BackSide,
+    }),
+    redFlower: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: redFlower,
+        side: THREE.BackSide,
+    }),
+    blueFlower: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: blueFlower,
         side: THREE.BackSide,
     }),
 };

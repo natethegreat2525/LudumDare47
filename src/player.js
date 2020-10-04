@@ -77,7 +77,7 @@ export default class Player {
     update(world, dt) {
         world.scene.remove(this.sprites[this.currentState].mesh);
         this.currentState = IDLE_STATE;
-        if (Math.random() > .99) {
+        if (Math.random() > .997) {
             console.log(this.pos.clone().divideScalar(BLOCK_WIDTH).floor());
         }
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {

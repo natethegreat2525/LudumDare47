@@ -13,6 +13,7 @@ import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
 import { forestBackgroundSound } from './sounds';
 import Door from './door';
+import Grass from './grass';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -20,6 +21,7 @@ export default class World {
         this.height = 80;
         this.grid = new Array(this.width*this.height);
         this.grid.fill(' ');
+        this.flowerGrid = new Array(this.width*this.height);
         this.spriteGrid = new Array(this.grid.length);
         this.vineGrow = false;
         this.camera = new THREE.OrthographicCamera(0, cwidth, 0, cheight, -1000, 1000);
@@ -27,10 +29,17 @@ export default class World {
         this.cameraHeight = cheight;
         this.scene = new THREE.Scene();
 
+        this.blueCrushed = false;
+        this.redCrushed = false;
+        this.yellowCrushed = false;
+
+        this.ticks = 0;
+
         this.player = new Player(new THREE.Vector2(100, 100));
 
         this.entities = [];
         this.entityQueue = [];
+        this.disturbedGrass = [];
 
         this.addEntity(this.player);
 
@@ -70,7 +79,24 @@ export default class World {
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5)));
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5)));
 
+        // behind level 4?
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (82.5), BLOCK_WIDTH*47.5)));
+
+        // blue flower control door
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 113.5, BLOCK_WIDTH*23), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
+            return new THREE.Vector2(0, this.blueCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.blueCrushed)) : BLOCK_WIDTH*2);
+        }));
+
+        // yellow flower control door
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 93.5, BLOCK_WIDTH*29), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
+            return new THREE.Vector2(0, this.yellowCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.yellowCrushed)) : BLOCK_WIDTH*2);
+        }));
+
+        // red flower control door
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 18.5, BLOCK_WIDTH*30), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
+            return new THREE.Vector2(0, this.redCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.redCrushed)) : BLOCK_WIDTH*2);
+        }));
+
 
         this.loadMap();
 
@@ -90,6 +116,7 @@ export default class World {
     }
 
     update(dt) {
+        this.ticks++;
         for (let ent of this.entityQueue) {
             this.entities.push(ent);
         }
@@ -217,6 +244,28 @@ export default class World {
             camX = this.width*BLOCK_WIDTH - this.cameraWidth;
         }
         this.camera.position.set(camX, camY, 0);
+
+        let playerPos = this.player.pos.clone().divideScalar(BLOCK_WIDTH).floor();
+        let grass = this.flowerGrid[playerPos.x + playerPos.y * this.width];
+        if (grass) {
+            if(grass.disturbed === 0) {
+                this.disturbedGrass.push(grass);
+            }
+            let disturb = this.player.vel.x;
+            if (Math.abs(this.player.vel.y*5) > Math.abs(this.player.vel.x)) {
+                disturb = this.player.vel.y*5;
+            }
+            grass.initDisturb(disturb*.1);
+            
+        }
+        let nextDisturbed = [];
+        for (let g of this.disturbedGrass) {
+            g.disturb(this);
+            if (g.disturbed > 0) {
+                nextDisturbed.push(g);
+            }
+        }
+        this.disturbedGrass = nextDisturbed;
     }
 
     boxCollide(entity, lowCorner, highCorner, debug) {
@@ -271,6 +320,29 @@ export default class World {
                 } else if (value === 's') {
                     this.player.pos.x = (x + .5)*BLOCK_WIDTH;
                     this.player.pos.y = (y + .5)*BLOCK_WIDTH;
+                } else if (value === 'G') {
+                    //grass pseudo entity
+                    let grass = new Grass(x, y);
+                    this.flowerGrid[x + y*this.width] = grass;
+                    this.scene.add(grass.sprite.mesh);
+                } else if (value === 'r') {
+                    //grass pseudo entity
+                    let grass = new Grass(x, y, 'r');
+                    this.flowerGrid[x + y*this.width] = grass;
+                    this.scene.add(grass.sprite.mesh);
+                    this.scene.add(grass.flower.mesh);
+                } else if (value === 'b') {
+                    //grass pseudo entity
+                    let grass = new Grass(x, y, 'b');
+                    this.flowerGrid[x + y*this.width] = grass;
+                    this.scene.add(grass.sprite.mesh);
+                    this.scene.add(grass.flower.mesh);
+                } else if (value === 'y') {
+                    //grass pseudo entity
+                    let grass = new Grass(x, y, 'y');
+                    this.flowerGrid[x + y*this.width] = grass;
+                    this.scene.add(grass.sprite.mesh);
+                    this.scene.add(grass.flower.mesh);
                 } else if (value === '.') {
                     //do nothing
                 } else {
