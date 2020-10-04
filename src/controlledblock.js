@@ -9,7 +9,7 @@ const controlledMaterial = new THREE.MeshBasicMaterial({
 });
 
 export default class ControlledBlock {
-    constructor(pos, size, controller) {
+    constructor(pos, size, controller, material) {
         this.type = 'controlledblock';
         this.originalPos = pos.clone();
         this.pos = pos;
@@ -18,7 +18,7 @@ export default class ControlledBlock {
         this.solid = true;
         this.deleteFlag = false;
         this.geometry = new THREE.PlaneGeometry(size.x, size.y);
-        this.sprite = new Sprite(controlledMaterial, this.geometry);
+        this.sprite = new Sprite(material || controlledMaterial, this.geometry);
         this.collisionSize = size;
         this.controller = controller;
         this.offset = new THREE.Vector2();

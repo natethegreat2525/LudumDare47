@@ -85,17 +85,17 @@ export default class World {
         // blue flower control door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 113.5, BLOCK_WIDTH*23), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
             return new THREE.Vector2(0, this.blueCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.blueCrushed)) : BLOCK_WIDTH*2);
-        }));
+        }, spriteMaterials.blueDoor));
 
         // yellow flower control door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 93.5, BLOCK_WIDTH*29), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
             return new THREE.Vector2(0, this.yellowCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.yellowCrushed)) : BLOCK_WIDTH*2);
-        }));
+        }, spriteMaterials.yellowDoor));
 
         // red flower control door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 18.5, BLOCK_WIDTH*30), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
             return new THREE.Vector2(0, this.redCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.redCrushed)) : BLOCK_WIDTH*2);
-        }));
+        }, spriteMaterials.redDoor));
 
 
         this.loadMap();

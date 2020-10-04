@@ -21,6 +21,12 @@ const redFlower = loader.load('./red_flower.png');
 redFlower.flipY = false;
 const yellowFlower = loader.load('./yellow_flower.png');
 yellowFlower.flipY = false;
+const blueDoor = loader.load('./blue_door.png');
+blueDoor.flipY = false;
+const redDoor = loader.load('./red_door.png');
+redDoor.flipY = false;
+const yellowDoor = loader.load('./yellow_door.png');
+yellowDoor.flipY = false;
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
         map: dirtTexture,
@@ -60,6 +66,21 @@ export const spriteMaterials = {
     blueFlower: new THREE.MeshBasicMaterial({
         transparent: true,
         map: blueFlower,
+        side: THREE.BackSide,
+    }),
+    yellowDoor: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: yellowDoor,
+        side: THREE.BackSide,
+    }),
+    redDoor: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: redDoor,
+        side: THREE.BackSide,
+    }),
+    blueDoor: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: blueDoor,
         side: THREE.BackSide,
     }),
 };
