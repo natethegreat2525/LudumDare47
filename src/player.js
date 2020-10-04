@@ -23,6 +23,14 @@ const playerRunMaterial = new THREE.MeshBasicMaterial({
     transparent: true,
 });
 
+const playerClimbSprite = loader.load('./player-climbing.png');
+playerClimbSprite.flipY = false;
+const playerClimbMaterial = new THREE.MeshBasicMaterial({
+    map: playerClimbSprite,
+    side: THREE.BackSide,
+    transparent: true,
+});
+
 const playerJumpSprite = loader.load('./player-jump.png');
 playerJumpSprite.flipY = false;
 const playerJumpMaterial = new THREE.MeshBasicMaterial({
@@ -52,18 +60,21 @@ export default class Player {
         this.textures = [
             playerIdleSprite,
             playerRunSprite,
-            playerJumpSprite
+            playerJumpSprite,
+            playerClimbSprite,
         ];
         this.sprites = [
             new Sprite(playerIdleMaterial, playerGeometry),
             new Sprite(playerRunMaterial, playerGeometry),
             new Sprite(playerJumpMaterial, playerGeometry),
+            new Sprite(playerClimbMaterial, playerGeometry),
         ];
         this.currentState = IDLE_STATE;
         this.spriteAnimations = [
             new TextureAnimation(playerIdleSprite, 1, 100),
             new TextureAnimation(playerRunSprite, 6, 6),
             new TextureAnimation(playerJumpSprite, 6, 4),
+            new TextureAnimation(playerClimbSprite, 5, 10),
         ];
         this.collisionSize = new THREE.Vector2(28, 48);
 
@@ -105,6 +116,7 @@ export default class Player {
         }
         if (this.climbing) {
             this.vel.y = 0;
+            this.currentState = CLIMB_STATE;
         }
         if ((Key.isDown(Key.DOWN) || Key.isDown(Key.S)) && this.climbing) {
             this.vel.y = 2;
