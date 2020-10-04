@@ -1,15 +1,19 @@
 import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
+import TextureAnimation from './texture-animation';
 
 const GRAVITY = 0.7;
 
+const loader = new THREE.TextureLoader();
+const playerSpriteSheet = loader.load('http://localhost:3000/player-running.png');
+playerSpriteSheet.flipY = false;
 const playerMaterial = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
+    map: playerSpriteSheet,
     side: THREE.BackSide,
+    transparent: true,
 });
-
-const playerGeometry = new THREE.PlaneGeometry(28, 48);
+const playerGeometry = new THREE.PlaneGeometry(30, 60);
 
 export default class Player {
     constructor(pos) {
@@ -18,11 +22,14 @@ export default class Player {
         this.forces = new THREE.Vector2(0, 0);
         this.grounded = false;
         this.deleteFlag = false;
+        this.texture = playerSpriteSheet;
         this.sprite = new Sprite(playerMaterial, playerGeometry);
+        this.spriteAnimation = new TextureAnimation(playerSpriteSheet, 6, 10);
         this.collisionSize = new THREE.Vector2(28, 48);
     }
 
     update(world, dt) {
+        this.spriteAnimation.update(this.texture, dt);
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
 
         this.forces.y += GRAVITY;
