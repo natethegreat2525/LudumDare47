@@ -2,11 +2,7 @@ import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
-
-const vineMaterial = new THREE.MeshBasicMaterial({
-    color: 0x005500,
-    side: THREE.BackSide,
-});
+import { spriteMaterials } from './materials';
 
 const vineGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH, BLOCK_WIDTH);
 
@@ -18,7 +14,7 @@ export default class Vine {
         this.dynamic = false;
         this.solid = false;
         this.deleteFlag = false;
-        this.sprite = new Sprite(vineMaterial, vineGeometry);
+        this.sprite = new Sprite(spriteMaterials.vine, vineGeometry);
         this.collisionSize = new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH);
         this.grown = false;
     }

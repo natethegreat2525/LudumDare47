@@ -27,6 +27,9 @@ const redDoor = loader.load('./red_door.png');
 redDoor.flipY = false;
 const yellowDoor = loader.load('./yellow_door.png');
 yellowDoor.flipY = false;
+const vine = loader.load('./vine.png');
+vine.flipY = false;
+
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
         map: dirtTexture,
@@ -83,4 +86,9 @@ export const spriteMaterials = {
         map: blueDoor,
         side: THREE.BackSide,
     }),
+    vine: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: vine,
+        side: THREE.BackSide,
+    })
 };
