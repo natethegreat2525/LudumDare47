@@ -11,7 +11,7 @@ import { spriteMaterials } from './materials';
 import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
-import { forestBackgroundSound } from './sounds';
+import { forestBackgroundSound, whistleSound } from './sounds';
 import Door from './door';
 import Grass from './grass';
 
@@ -125,6 +125,10 @@ export default class World {
         this.vineGrow = false;
         if (Mouse.leftHit()) {
             this.vineGrow = true;
+            whistleSound.play();
+        }
+        if (!Mouse.leftDown) {
+            whistleSound.pause();
         }
         for (let entity of this.entities) {
             entity.update(this, dt);

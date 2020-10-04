@@ -34,7 +34,7 @@ export default class Vine {
         this.geometry.vertices[2].set(-size, -size, 0);
         this.geometry.vertices[3].set(size, -size, 0);
         this.geometry.verticesNeedUpdate = true;
-        if (Mouse.leftDown && (world.vineGrow || this.ticks % 200 === 0) && !this.grown) {
+        if (Mouse.leftDown && (world.vineGrow || this.ticks % 300 === 0) && !this.grown) {
             let playerX = Math.floor(world.player.pos.x / BLOCK_WIDTH);
             let vineX = Math.floor(this.pos.x / BLOCK_WIDTH);
             let probExtraVine = 1/Math.pow(Math.abs(vineX - playerX) + 1, 2)
