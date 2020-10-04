@@ -13,6 +13,7 @@ export const footstepSound = sound('./footstep.mp3');
 export const stoneButtonSound = sound('./scape_stone.mp3');
 export const gravelCrumbleSound = sound('./gravel_crumble.mp3');
 export const whistleSound = sound('./whistle_tune.mp3');
+export const mouseSound = sound('./mouse_click.mp3');
 
 footstepSound.playbackRate = 1.5;
 footstepSound.volume = 0.2;
@@ -27,3 +28,5 @@ stoneButtonSound.volume = 0.05;
 gravelCrumbleSound.volume = 0.5;
 whistleSound.loop = true;
 whistleSound.volume = .3;
+
+mouseSound.volume = .5;

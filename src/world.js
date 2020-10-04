@@ -11,9 +11,10 @@ import { spriteMaterials } from './materials';
 import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
-import { forestBackgroundSound, whistleSound } from './sounds';
+import { forestBackgroundSound, whistleSound, mouseSound } from './sounds';
 import Door from './door';
 import Grass from './grass';
+import Particle from './particle';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -104,10 +105,23 @@ export default class World {
 
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 27.5, BLOCK_WIDTH*15.5)));
 
+        setInterval(() => {
+            this.addEntity(new Particle(new THREE.Vector2(43*32, 42*32), new THREE.Vector2(0, 0), new THREE.Vector2(0, 1), new THREE.Vector2(5, 5), 220, spriteMaterials.waterDrop, () => {
+                let pdist = this.player.pos.clone().sub(new THREE.Vector2(39*32, 46*32)).length();
+                if (pdist < 32*9) {
+                    mouseSound.play();
+                    this.addEntity(new Particle(new THREE.Vector2(43*32, 48*32), new THREE.Vector2(0, -1), new THREE.Vector2(0, 0), new THREE.Vector2(64, 32), 220, spriteMaterials.clickText, null, 50, 1));
+                }
+            }));
+            setTimeout(() => {
+                this.addEntity(new Particle(new THREE.Vector2(45*32, 42*32), new THREE.Vector2(0, 0), new THREE.Vector2(0, 1), new THREE.Vector2(5, 5), 220, spriteMaterials.waterDrop, () => {
+                }));
+            }, 100);
+        }, 3000);
 
         setTimeout(() => {
             forestBackgroundSound.play();
-        }, 1000);
+        }, 10000);
     }
 
     addEntity(entity) {

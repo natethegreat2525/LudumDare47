@@ -39,7 +39,8 @@ const dirt5Tall = loader.load('./dirt_5.png');
 dirt5Tall.flipY = false;
 dirt5Tall.repeat.set(7,1);
 dirt5Tall.wrapS = THREE.RepeatWrapping;
-
+const clickText = loader.load('./click_text.png');
+clickText.flipY = false;
 
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
@@ -118,6 +119,16 @@ export const spriteMaterials = {
     dirt5Tall: new THREE.MeshBasicMaterial({
         transparent: true,
         map: dirt5Tall,
+        side: THREE.BackSide,
+    }),
+    waterDrop: new THREE.MeshBasicMaterial({
+        color: 0x0088ff,
+        side: THREE.BackSide,
+    }),
+    clickText: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: clickText,
         side: THREE.BackSide,
     }),
 };
