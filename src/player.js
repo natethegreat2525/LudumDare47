@@ -22,6 +22,7 @@ export default class Player {
         this.forces = new THREE.Vector2(0, 0);
         this.grounded = false;
         this.deleteFlag = false;
+        this.xDirection = 1;
         this.texture = playerSpriteSheet;
         this.sprite = new Sprite(playerMaterial, playerGeometry);
         this.spriteAnimation = new TextureAnimation(playerSpriteSheet, 6, 10);
@@ -29,7 +30,6 @@ export default class Player {
     }
 
     update(world, dt) {
-        this.spriteAnimation.update(this.texture, dt);
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
 
         this.forces.y += GRAVITY;
@@ -40,13 +40,17 @@ export default class Player {
         this.vel.x = 0;
         if (Key.isDown(Key.RIGHT)) {
             this.vel.x = 5;
+            this.xDirection = 1;
         }
         if (Key.isDown(Key.LEFT)) {
             this.vel.x = -5;
+            this.xDirection = -1;
         }
         if (Key.isDown(Key.UP) && this.grounded && this.vel.y > 0) {
             this.vel.y = -15;
         }
+
+        this.spriteAnimation.update(this.texture, dt, this.xDirection);
     }
 
     init(world) {

@@ -11,7 +11,7 @@ export default class TextureAnimation {
         this.currentTile = 0;
     }
 
-    update(texture, ms) {
+    update(texture, ms, xDirection) {
         this.currentDisplayTime += ms;
         while (this.currentDisplayTime > this.displayDuration)
         {
@@ -24,5 +24,6 @@ export default class TextureAnimation {
             let currentColumn = this.currentTile % this.numberTiles;
             texture.offset.x = currentColumn / this.numberTiles;
         }
+        texture.repeat.set((xDirection / this.numberTiles), 1);
     }
 }
