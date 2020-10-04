@@ -32,7 +32,7 @@ export default class Button {
 
     collide(other, diff) {
         if (other.type == 'player' && diff.y > 0) {
-            this.pos.y += 1;
+            this.pos.y += .1;
         }
     }
 

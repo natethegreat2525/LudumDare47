@@ -11,6 +11,7 @@ import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
 import { forestBackgroundSound } from './sounds';
+import Door from './door';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -73,31 +74,36 @@ export default class World {
                 entity.pos.add(entity.vel.clone().multiplyScalar(dt));
                 entity.vel.add(entity.forces.multiplyScalar(dt));
                 entity.forces = new THREE.Vector2(0, 0);
-
-                entity.grounded = false;
-
-                for (let staticEnt of this.entities) {
-                    if (staticEnt.dynamic || !staticEnt.physics) {
-                        continue;
+                for (let isPositioning = 0; isPositioning < 2; isPositioning++) {
+                    if (isPositioning) {
+                        entity.grounded = false;
                     }
-                    let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)), true);
-                    if (diff) {
-                        staticEnt.collide(entity, diff.clone().multiplyScalar(-1));
-                        entity.collide(staticEnt, diff.clone());
-                        if (staticEnt.solid) {
-                            entity.pos.add(diff);
-                            if (diff.y < 0) {
-                                entity.vel.y = Math.min(0, entity.vel.y);
-                                entity.grounded = true;
-                            }
-                            if (diff.y > 0) {
-                                entity.vel.y = Math.max(0, entity.vel.y);
-                            }
-                            if (diff.x < 0) {
-                                entity.vel.x = Math.min(0, entity.vel.x);
-                            }
-                            if (diff.x > 0) {
-                                entity.vel.x = Math.max(0, entity.vel.x);
+                    for (let staticEnt of this.entities) {
+                        if (staticEnt.dynamic || !staticEnt.physics) {
+                            continue;
+                        }
+                        let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)));
+                        if (diff) {
+                            if (!isPositioning) {
+                                staticEnt.collide(entity, diff.clone().multiplyScalar(-1));
+                                entity.collide(staticEnt, diff.clone());
+                            } else {
+                                if (staticEnt.solid) {
+                                    entity.pos.add(diff);
+                                    if (diff.y < 0) {
+                                        entity.vel.y = Math.min(0, entity.vel.y);
+                                        entity.grounded = true;
+                                    }
+                                    if (diff.y > 0) {
+                                        entity.vel.y = Math.max(0, entity.vel.y);
+                                    }
+                                    if (diff.x < 0) {
+                                        entity.vel.x = Math.min(0, entity.vel.x);
+                                    }
+                                    if (diff.x > 0) {
+                                        entity.vel.x = Math.max(0, entity.vel.x);
+                                    }
+                                }
                             }
                         }
                     }
@@ -173,9 +179,7 @@ export default class World {
 
         let xDiff = entity.pos.x - (lowCorner.x + highCorner.x)/2;
         let yDiff = entity.pos.y - (lowCorner.y + highCorner.y)/2;
-        if (debug) {
-            //console.log(entity.pos, lowCorner);
-        }
+
         if (Math.abs(xDiff) < xRad && Math.abs(yDiff) < yRad) {
             if (Math.abs(xDiff) - xRad > Math.abs(yDiff) - yRad) {
                 yDiff = yRad;
@@ -215,7 +219,12 @@ export default class World {
         let map2d = smallMapGrid.split('\n').map(x => x.split(''));
         for (let y = 0; y < map2d.length; y++) {
             for (let x = 0; x < map2d[y].length; x++) {
-                this.grid[x + y*this.width] = map2d[y][x];
+                let value = map2d[y][x];
+                if (!isNaN(parseInt(value))) {
+                    this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), parseInt(value)))
+                } else {
+                    this.grid[x + y*this.width] = map2d[y][x];
+                }
             }
         }
         for (let x = 0; x < this.width; x++) {

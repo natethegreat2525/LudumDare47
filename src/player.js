@@ -29,6 +29,7 @@ export default class Player {
         this.isOnVine = false;
 
         this.wasGrounded = false;
+        this.reset = false;
     }
 
     update(world, dt) {
@@ -77,6 +78,13 @@ export default class Player {
     collide(other) {
         if (other.type === 'vine') {
             this.isOnVine = true;
+        }
+        if (other.type === 'door') {
+            if (this.grounded) {
+                
+                console.log('You win level', other.level);
+                this.reset = true;
+            }
         }
     }
 
