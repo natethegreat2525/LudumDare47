@@ -86,14 +86,14 @@ export default class Player {
             }
         }
         this.vel.x = 0;
-        if (Key.isDown(Key.RIGHT)) {
+        if (Key.isDown(Key.RIGHT) || Key.isDown(Key.D)) {
             this.vel.x = 4;
             this.xDirection = 1;
             if (this.currentState != JUMP_STATE) {
                 this.currentState = RUN_STATE;
             }
         }
-        if (Key.isDown(Key.LEFT)) {
+        if (Key.isDown(Key.LEFT) || Key.isDown(Key.A)) {
             this.vel.x = -4;
             this.xDirection = -1;
             if (this.currentState != JUMP_STATE) {
@@ -106,10 +106,10 @@ export default class Player {
         if (this.climbing) {
             this.vel.y = 0;
         }
-        if (Key.isDown(Key.DOWN) && this.climbing) {
+        if ((Key.isDown(Key.DOWN) || Key.isDown(Key.S)) && this.climbing) {
             this.vel.y = 2;
         }
-        if (Key.isDown(Key.UP)) {
+        if (Key.isDown(Key.UP) || Key.isDown(Key.W)) {
             if (this.isOnVine) {
                 this.climbing = true;
                 this.vel.y = -2;
