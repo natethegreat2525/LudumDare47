@@ -2,13 +2,10 @@ import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
+import { spriteMaterials } from './materials';
 
-const doorMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffff00,
-    side: THREE.BackSide,
-});
-
-const doorGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH*.66, BLOCK_WIDTH*1.5);
+//const doorGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH*.80, BLOCK_WIDTH*1.5);
+const doorGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH *1.25, BLOCK_WIDTH * 1.5);
 
 export default class Door {
     constructor(pos, level) {
@@ -18,7 +15,7 @@ export default class Door {
         this.dynamic = false;
         this.solid = false;
         this.deleteFlag = false;
-        this.sprite = new Sprite(doorMaterial, doorGeometry);
+        this.sprite = new Sprite(spriteMaterials.defaultDoor, doorGeometry);
         this.collisionSize = new THREE.Vector2(BLOCK_WIDTH*.66, BLOCK_WIDTH*1.5);
         this.level = level;
     }
