@@ -4,10 +4,12 @@ import Sprite from './sprite';
 import Player from './player';
 import { Vector2 } from 'three';
 import Button from './button';
+import Vine from './vine';
 import CrumbleBlock from './crumbleblock';
 import { spriteMaterials } from './materials';
 import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
+import { Mouse } from './mouse';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -16,13 +18,14 @@ export default class World {
         this.grid = new Array(this.width*this.height);
         this.grid.fill(' ');
         this.spriteGrid = new Array(this.grid.length);
-
+        this.vineGrow = false;
         this.camera = new THREE.OrthographicCamera(0, cwidth, 0, cheight, -1000, 1000);
         this.scene = new THREE.Scene();
 
         this.player = new Player(new THREE.Vector2(100, 100));
 
         this.entities = [];
+        this.entityQueue = [];
 
         this.addEntity(this.player);
 
@@ -33,14 +36,32 @@ export default class World {
         this.loadMap();
 
         this.addEntity(new Foreground(this.width, this.height));
+
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 27.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 28.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 29.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 26.5, BLOCK_WIDTH*19.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 25.5, BLOCK_WIDTH*20.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 7.5, BLOCK_WIDTH*4.5)));
+
+
     }
 
     addEntity(entity) {
-        this.entities.push(entity);
+        this.entityQueue.push(entity);
         entity.init(this);
     }
 
     update(dt) {
+        for (let ent of this.entityQueue) {
+            this.entities.push(ent);
+        }
+        this.entityQueue = [];
+
+        this.vineGrow = false;
+        if (Mouse.leftHit()) {
+            this.vineGrow = true;
+        }
         for (let entity of this.entities) {
             entity.update(this, dt);
 

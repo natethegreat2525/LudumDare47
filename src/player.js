@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
+import { BLOCK_WIDTH } from './constants';
 
 
 const playerMaterial = new THREE.MeshBasicMaterial({
@@ -22,6 +23,9 @@ export default class Player {
         this.deleteFlag = false;
         this.sprite = new Sprite(playerMaterial, playerGeometry);
         this.collisionSize = new THREE.Vector2(28, 48);
+
+        this.climbing = false;
+        this.isOnVine = false;
     }
 
     update(world, dt) {
@@ -29,14 +33,32 @@ export default class Player {
 
         this.vel.x = 0;
         if (Key.isDown(Key.RIGHT)) {
-            this.vel.x = 5;
+            this.vel.x = 4;
         }
         if (Key.isDown(Key.LEFT)) {
-            this.vel.x = -5;
+            this.vel.x = -4;
         }
-        if (Key.isDown(Key.UP) && this.grounded && this.vel.y >= 0) {
-            this.vel.y = -15;
+        
+        if (!this.isOnVine) {
+            this.climbing = false;
         }
+        
+        if (this.climbing) {
+            this.vel.y = 0;
+        }
+        if (Key.isDown(Key.DOWN) && this.climbing) {
+            this.vel.y = 2;
+        }
+        if (Key.isDown(Key.UP)) {
+            if (this.isOnVine) {
+                this.climbing = true;
+                this.vel.y = -2;
+            }
+            if (!this.climbing && this.grounded && this.vel.y >= 0) {
+                this.vel.y = -15;
+            }
+        }
+        this.isOnVine = false;
     }
 
     init(world) {
@@ -44,7 +66,9 @@ export default class Player {
     }
 
     collide(other) {
-        console.log('collide');
+        if (other.type === 'vine') {
+            this.isOnVine = true;
+        }
     }
 
     tearDown(world) {
