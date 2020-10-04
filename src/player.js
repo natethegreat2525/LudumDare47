@@ -132,9 +132,6 @@ export default class Player {
                     this.vel.y = -14;
                 }
             }
-            if (this.wasGrounded && this.grounded) {
-                //this.currentState = IDLE_STATE;
-            }
         }
         this.wasGrounded = this.grounded;
         this.isOnVine = false;

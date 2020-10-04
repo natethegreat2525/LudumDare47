@@ -3,6 +3,7 @@ import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
 import { spriteMaterials } from './materials';
+import { stoneButtonSound } from './sounds';
 
 export default class Button {
     constructor(pos, size) {
@@ -23,10 +24,17 @@ export default class Button {
         this.sprite = new Sprite(spriteMaterials.button, this.geometry);
         this.collisionSize = size;
         this.offset = 0;
+        this.currentlyCollided = false;
+        this.collided = false;
+        this.playedOnce = false;
     }
 
     update(world, dt) {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
+        if (this.collided && !this.playedOnce) {
+            stoneButtonSound.play();
+            this.playedOnce = true;
+        }
     }
 
     init(world) {
@@ -37,6 +45,9 @@ export default class Button {
         if (other.type == 'player' && diff.y > 0) {
             this.pos.y += .1;
             this.offset += .1;
+        } 
+        if (Math.floor(diff.y) == 0 && !this.playedOnce) {
+            this.collided =  true
         }
     }
 
