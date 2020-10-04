@@ -33,6 +33,9 @@ export default class Player {
     }
 
     update(world, dt) {
+        if (Math.random() > .99) {
+            console.log(this.pos.clone().divideScalar(BLOCK_WIDTH).floor());
+        }
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
 
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
@@ -64,7 +67,7 @@ export default class Player {
                 this.vel.y = -2;
             }
             if (!this.climbing && this.grounded && this.vel.y >= 0) {
-                this.vel.y = -15;
+                this.vel.y = -14;
             }
         }
         this.wasGrounded = this.grounded;

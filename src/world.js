@@ -4,6 +4,7 @@ import Sprite from './sprite';
 import Player from './player';
 import { Vector2 } from 'three';
 import Button from './button';
+import ControlledBlock from './controlledblock';
 import Vine from './vine';
 import CrumbleBlock from './crumbleblock';
 import { spriteMaterials } from './materials';
@@ -22,6 +23,8 @@ export default class World {
         this.spriteGrid = new Array(this.grid.length);
         this.vineGrow = false;
         this.camera = new THREE.OrthographicCamera(0, cwidth, 0, cheight, -1000, 1000);
+        this.cameraWidth = cwidth;
+        this.cameraHeight = cheight;
         this.scene = new THREE.Scene();
 
         this.player = new Player(new THREE.Vector2(100, 100));
@@ -31,20 +34,44 @@ export default class World {
 
         this.addEntity(this.player);
 
-        this.addEntity(new Button(new THREE.Vector2(BLOCK_WIDTH * 10.5, BLOCK_WIDTH*17.5)));
-        for (let i = 0; i < 5; i++) {
-            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (15.5-i), BLOCK_WIDTH*14.5)));
+        let l2button = new Button(new THREE.Vector2(BLOCK_WIDTH * 25 , BLOCK_WIDTH*35.5), new THREE.Vector2(BLOCK_WIDTH*2, BLOCK_WIDTH));
+        this.addEntity(l2button);
+        let l1button = new Button(new THREE.Vector2(BLOCK_WIDTH * 85.5, BLOCK_WIDTH*33.5), new THREE.Vector2(BLOCK_WIDTH*5, BLOCK_WIDTH));
+        this.addEntity(l1button);
+
+        // reveals level 1 door
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 92.5, BLOCK_WIDTH*33), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
+            return new THREE.Vector2(0, l1button.offset * 2+2);
+        }));
+        // reveals level 2 entrance
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 69.5, BLOCK_WIDTH*33.5), new THREE.Vector2(BLOCK_WIDTH*7, BLOCK_WIDTH*5), () => {
+            return new THREE.Vector2(0, l2button.offset > 0 ? 100000 : 0);
+        }));
+
+        //dir crumble blocks under first mountain
+        for (let i = 0; i < 7; i++) {
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*36.5)));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (66.5+i), BLOCK_WIDTH*37.5)));
         }
+
+        //vines for level 3
+        for (let i = 0; i < 8; i++) {
+            this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (35.5+i), BLOCK_WIDTH * (39.5))))
+        }
+        for (let i = 0; i < 4; i++) {
+            this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (43.5+i), BLOCK_WIDTH * (42.5))))
+        }
+
+        //grass crumble blocks
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5)));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5)));
+
         this.loadMap();
 
         this.addEntity(new Foreground(this.width, this.height));
 
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 27.5, BLOCK_WIDTH*15.5)));
-        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 28.5, BLOCK_WIDTH*15.5)));
-        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 29.5, BLOCK_WIDTH*15.5)));
-        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 26.5, BLOCK_WIDTH*19.5)));
-        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 25.5, BLOCK_WIDTH*20.5)));
-        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 7.5, BLOCK_WIDTH*4.5)));
+
 
         setTimeout(() => {
             forestBackgroundSound.play();
@@ -82,7 +109,7 @@ export default class World {
                         if (staticEnt.dynamic || !staticEnt.physics) {
                             continue;
                         }
-                        let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)));
+                        let diff = this.boxCollide(entity, staticEnt.pos.clone().sub(staticEnt.collisionSize.clone().multiplyScalar(.5)), staticEnt.pos.clone().add(staticEnt.collisionSize.clone().multiplyScalar(.5)), true);
                         if (diff) {
                             if (!isPositioning) {
                                 staticEnt.collide(entity, diff.clone().multiplyScalar(-1));
@@ -171,11 +198,23 @@ export default class World {
                 i--;
             }
         }
+        let camX = 0;
+        let camY = 0;
+        if (this.player.pos.x > this.cameraWidth/2) {
+            camX = this.player.pos.x - this.cameraWidth/2;
+        }
+        if (this.player.pos.y > this.cameraHeight/2) {
+            camY = this.player.pos.y - this.cameraHeight/2;
+        }
+        if (this.player.pos.x > this.width*BLOCK_WIDTH - this.cameraWidth/2) {
+            camX = this.width*BLOCK_WIDTH - this.cameraWidth;
+        }
+        this.camera.position.set(camX, camY, 0);
     }
 
     boxCollide(entity, lowCorner, highCorner, debug) {
-        const xRad = (BLOCK_WIDTH + entity.collisionSize.x) * .5;
-        const yRad = (BLOCK_WIDTH + entity.collisionSize.y) * .5;
+        const xRad = ((highCorner.x - lowCorner.x) + entity.collisionSize.x) * .5;
+        const yRad = ((highCorner.y - lowCorner.y) + entity.collisionSize.y) * .5;
 
         let xDiff = entity.pos.x - (lowCorner.x + highCorner.x)/2;
         let yDiff = entity.pos.y - (lowCorner.y + highCorner.y)/2;
@@ -222,8 +261,13 @@ export default class World {
                 let value = map2d[y][x];
                 if (!isNaN(parseInt(value))) {
                     this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), parseInt(value)))
+                } else if (value === 's') {
+                    this.player.pos.x = (x + .5)*BLOCK_WIDTH;
+                    this.player.pos.y = (y + .5)*BLOCK_WIDTH;
+                } else if (value === '.') {
+                    //do nothing
                 } else {
-                    this.grid[x + y*this.width] = map2d[y][x];
+                    this.grid[x + y*this.width] = value;
                 }
             }
         }
