@@ -23,9 +23,18 @@ const playerRunMaterial = new THREE.MeshBasicMaterial({
     transparent: true,
 });
 
+const playerJumpSprite = loader.load('http://localhost:3000/player-jump.png');
+playerJumpSprite.flipY = false;
+const playerJumpMaterial = new THREE.MeshBasicMaterial({
+    map: playerJumpSprite,
+    side: THREE.BackSide,
+    transparent: true,
+});
+
 const IDLE_STATE    = 0; 
 const RUN_STATE     = 1;
-const CLIMB_STATE   = 2;
+const JUMP_STATE    = 2;
+const CLIMB_STATE   = 3;
 
 const playerGeometry = new THREE.PlaneGeometry(30, 60);
 
@@ -42,16 +51,19 @@ export default class Player {
         this.xDirection = 1;
         this.textures = [
             playerIdleSprite,
-            playerRunSprite
+            playerRunSprite,
+            playerJumpSprite
         ];
         this.sprites = [
             new Sprite(playerIdleMaterial, playerGeometry),
-            new Sprite(playerRunMaterial, playerGeometry)
+            new Sprite(playerRunMaterial, playerGeometry),
+            new Sprite(playerJumpMaterial, playerGeometry),
         ];
         this.currentState = IDLE_STATE;
         this.spriteAnimations = [
             new TextureAnimation(playerIdleSprite, 1, 100),
-            new TextureAnimation(playerRunSprite, 6, 10)
+            new TextureAnimation(playerRunSprite, 6, 6),
+            new TextureAnimation(playerJumpSprite, 6, 4),
         ];
         this.collisionSize = new THREE.Vector2(28, 48);
 
@@ -64,7 +76,6 @@ export default class Player {
 
     update(world, dt) {
         world.scene.remove(this.sprites[this.currentState].mesh);
-        this.sprites[this.currentState].mesh.position.set(this.pos.x, this.pos.y, 0);
         this.currentState = IDLE_STATE;
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
             if (footstepSound.paused) {
@@ -75,12 +86,16 @@ export default class Player {
         if (Key.isDown(Key.RIGHT)) {
             this.vel.x = 4;
             this.xDirection = 1;
-            this.currentState = RUN_STATE;
+            if (this.currentState != JUMP_STATE) {
+                this.currentState = RUN_STATE;
+            }
         }
         if (Key.isDown(Key.LEFT)) {
             this.vel.x = -4;
             this.xDirection = -1;
-            this.currentState = RUN_STATE;
+            if (this.currentState != JUMP_STATE) {
+                this.currentState = RUN_STATE;
+            }
         }
         if (!this.isOnVine) {
             this.climbing = false;
@@ -96,12 +111,19 @@ export default class Player {
                 this.climbing = true;
                 this.vel.y = -2;
             }
-            if (!this.climbing && this.grounded && this.vel.y >= 0) {
-                this.vel.y = -15;
+            if (!this.climbing) {
+                this.currentState = JUMP_STATE;
+                if (this.grounded && this.vel.y >= 0) {
+                    this.vel.y = -15;
+                }
+            }
+            if (this.wasGrounded && this.grounded) {
+                //this.currentState = IDLE_STATE;
             }
         }
         this.wasGrounded = this.grounded;
         this.isOnVine = false;
+        this.sprites[this.currentState].mesh.position.set(this.pos.x, this.pos.y, 0);
         this.spriteAnimations[this.currentState].update(this.textures[this.currentState], dt, this.xDirection);
         world.scene.add(this.sprites[this.currentState].mesh);
     }
