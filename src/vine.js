@@ -4,8 +4,6 @@ import Key from './key';
 import { BLOCK_WIDTH } from './constants';
 import { spriteMaterials } from './materials';
 
-const vineGeometry = new THREE.PlaneGeometry(BLOCK_WIDTH, BLOCK_WIDTH);
-
 export default class Vine {
     constructor(pos) {
         this.type = 'vine';
@@ -14,14 +12,23 @@ export default class Vine {
         this.dynamic = false;
         this.solid = false;
         this.deleteFlag = false;
-        this.sprite = new Sprite(spriteMaterials.vine, vineGeometry);
+        this.geometry = new THREE.PlaneGeometry(BLOCK_WIDTH, BLOCK_WIDTH);
+        this.sprite = new Sprite(spriteMaterials.vine, this.geometry);
         this.collisionSize = new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH);
         this.grown = false;
+        this.dt = 0;
     }
 
     update(world, dt) {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, -2);
-
+        let size = BLOCK_WIDTH/2;
+        let theta = Math.cos(this.dt * 0.1);
+        this.dt += dt;
+        this.geometry.vertices[0].set(-size+theta, size, 0);
+        this.geometry.vertices[1].set(size+theta, size, 0);
+        this.geometry.vertices[2].set(-size, -size, 0);
+        this.geometry.vertices[3].set(size, -size, 0);
+        this.geometry.verticesNeedUpdate = true;
         if (world.vineGrow && !this.grown) {
             let playerX = Math.floor(world.player.pos.x / BLOCK_WIDTH);
             let vineX = Math.floor(this.pos.x / BLOCK_WIDTH);
