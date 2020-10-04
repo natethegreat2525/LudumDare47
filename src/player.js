@@ -77,6 +77,9 @@ export default class Player {
     update(world, dt) {
         world.scene.remove(this.sprites[this.currentState].mesh);
         this.currentState = IDLE_STATE;
+        if (Math.random() > .99) {
+            console.log(this.pos.clone().divideScalar(BLOCK_WIDTH).floor());
+        }
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
             if (footstepSound.paused) {
                 footstepSound.play();
@@ -114,7 +117,7 @@ export default class Player {
             if (!this.climbing) {
                 this.currentState = JUMP_STATE;
                 if (this.grounded && this.vel.y >= 0) {
-                    this.vel.y = -15;
+                    this.vel.y = -14;
                 }
             }
             if (this.wasGrounded && this.grounded) {

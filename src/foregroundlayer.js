@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
-import { foregroundMap } from './map';
+import { foregroundMap } from './foregroundmap';
 import { spriteMaterials } from './materials';
 import { BLOCK_WIDTH } from './constants';
 

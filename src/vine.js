@@ -27,7 +27,13 @@ export default class Vine {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, -2);
 
         if (world.vineGrow && !this.grown) {
-            if (Math.floor(world.player.pos.x / BLOCK_WIDTH) === Math.floor(this.pos.x / BLOCK_WIDTH) && world.player.pos.y > this.pos.y) {
+            let playerX = Math.floor(world.player.pos.x / BLOCK_WIDTH);
+            let vineX = Math.floor(this.pos.x / BLOCK_WIDTH);
+            let probExtraVine = 1/Math.pow(Math.abs(vineX - playerX) + 1, 2)
+            if (Math.random() < probExtraVine) {
+                vineX = playerX;
+            }
+            if ( vineX === playerX  && world.player.pos.y > this.pos.y) {
                 this.grown = true;
                 let newPos = this.pos.clone().add(new THREE.Vector2(0, BLOCK_WIDTH));
                 let blockNewPos = newPos.clone().divideScalar(BLOCK_WIDTH).floor();
