@@ -11,9 +11,10 @@ function sound(src) {
 export const forestBackgroundSound = sound('./forest_birds.mp3');
 export const footstepSound = sound('./footstep.mp3');
 export const stoneButtonSound = sound('./scape_stone.mp3');
+export const gravelCrumbleSound = sound('./gravel_crumble.mp3');
 
-footstepSound.playbackRate = 2;
-footstepSound.volume = 0.1;
+footstepSound.playbackRate = 1.5;
+footstepSound.volume = 0.2;
 
 forestBackgroundSound.loop = true;
 forestBackgroundSound.volume = 0.05;
@@ -21,3 +22,5 @@ forestBackgroundSound.volume = 0.05;
 stoneButtonSound.loop = false;
 stoneButtonSound.playbackRate = 1.0; 
 stoneButtonSound.volume = 0.05;
+
+gravelCrumbleSound.volume = 0.5;

@@ -6,12 +6,13 @@ export const Mouse = {
     vx: 0,
     vy: 0,
     leftDown: false,
+    hitFlag: false,
     rightDown: false,
     width: 0,
     height: 0,
     leftHit: function() {
-        if (this.leftDown) {
-            this.leftDown = false;
+        if (this.leftDown && !this.hitFlag) {
+            this.hitFlag = true;
             return true;
         }
     },
@@ -37,6 +38,7 @@ export const Mouse = {
         }
         el.onmouseup = (e) => {
             if (e.button === 0) {
+                this.hitFlag = false;
                 this.leftDown = false;
             }
             if (e.button === 2) {

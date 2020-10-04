@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
+import { gravelCrumbleSound } from './sounds';
 
 const crumbleBlockMaterial = new THREE.MeshBasicMaterial({
     color: 0xff00ff,
@@ -47,6 +48,9 @@ export default class CrumbleBlock {
     collide(other, diff) {
         if (other.type == 'player' && other.vel.y > 10 && diff.y > 0) {
             this.crumbleState++;
+            if (gravelCrumbleSound.paused) {
+                gravelCrumbleSound.play();
+            }
         }
     }
 

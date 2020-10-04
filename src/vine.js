@@ -3,6 +3,7 @@ import Sprite from './sprite';
 import Key from './key';
 import { BLOCK_WIDTH } from './constants';
 import { spriteMaterials } from './materials';
+import { Mouse } from './mouse';
 
 export default class Vine {
     constructor(pos) {
@@ -17,9 +18,13 @@ export default class Vine {
         this.collisionSize = new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH);
         this.grown = false;
         this.dt = 0;
+        this.ticks = 0;
     }
 
     update(world, dt) {
+        if (Math.random() > .5) {
+            this.ticks++;
+        }
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, -2);
         let size = BLOCK_WIDTH/2;
         let theta = Math.cos(this.dt * 0.1 + this.pos.x);
@@ -29,7 +34,7 @@ export default class Vine {
         this.geometry.vertices[2].set(-size, -size, 0);
         this.geometry.vertices[3].set(size, -size, 0);
         this.geometry.verticesNeedUpdate = true;
-        if (world.vineGrow && !this.grown) {
+        if (Mouse.leftDown && (world.vineGrow || this.ticks % 200 === 0) && !this.grown) {
             let playerX = Math.floor(world.player.pos.x / BLOCK_WIDTH);
             let vineX = Math.floor(this.pos.x / BLOCK_WIDTH);
             let probExtraVine = 1/Math.pow(Math.abs(vineX - playerX) + 1, 2)
