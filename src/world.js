@@ -257,22 +257,34 @@ export default class World {
                 for (let x = startX; x != endX; x += stepX) {
                     for (let y = startY; y != endY; y += stepY) {
                         if (this.grid[x + y*this.width] !== ' ') {
-                            let diff = this.boxCollide(entity, new Vector2(x*BLOCK_WIDTH, y*BLOCK_WIDTH), new Vector2((x+1)*BLOCK_WIDTH, (y+1)*BLOCK_WIDTH));
-                            if (diff) {
-                                entity.pos.add(diff);
-                                if (diff.y < 0) {
-                                    entity.pos.y += .01
-                                    entity.vel.y = Math.min(0, entity.vel.y);
-                                    entity.grounded = true;
+                            if (this.grid[x + y*this.width] == 't') {
+                                let diff = this.boxCollide(entity, new Vector2(x*BLOCK_WIDTH, y*BLOCK_WIDTH), new Vector2((x+1)*BLOCK_WIDTH, (y+1)*BLOCK_WIDTH));
+                                if (diff && entity.vel.y >= 0) {
+                                    if (diff.y < 0) {
+                                        entity.pos.y += .01
+                                        entity.vel.y = Math.min(0, entity.vel.y);
+                                        entity.grounded = true;
+                                        entity.pos.add(diff);
+                                    }
                                 }
-                                if (diff.y > 0) {
-                                    entity.vel.y = Math.max(0, entity.vel.y);
-                                }
-                                if (diff.x < 0) {
-                                    entity.vel.x = Math.min(0, entity.vel.x);
-                                }
-                                if (diff.x > 0) {
-                                    entity.vel.x = Math.max(0, entity.vel.x);
+                            } else {
+                                let diff = this.boxCollide(entity, new Vector2(x*BLOCK_WIDTH, y*BLOCK_WIDTH), new Vector2((x+1)*BLOCK_WIDTH, (y+1)*BLOCK_WIDTH));
+                                if (diff) {
+                                    entity.pos.add(diff);
+                                    if (diff.y < 0) {
+                                        entity.pos.y += .01
+                                        entity.vel.y = Math.min(0, entity.vel.y);
+                                        entity.grounded = true;
+                                    }
+                                    if (diff.y > 0) {
+                                        entity.vel.y = Math.max(0, entity.vel.y);
+                                    }
+                                    if (diff.x < 0) {
+                                        entity.vel.x = Math.min(0, entity.vel.x);
+                                    }
+                                    if (diff.x > 0) {
+                                        entity.vel.x = Math.max(0, entity.vel.x);
+                                    }
                                 }
                             }
                         }
@@ -308,8 +320,8 @@ export default class World {
                 this.disturbedGrass.push(grass);
             }
             let disturb = this.player.vel.x;
-            if (Math.abs(this.player.vel.y*5) > Math.abs(this.player.vel.x)) {
-                disturb = this.player.vel.y*5;
+            if (Math.abs(this.player.vel.y*10) > Math.abs(this.player.vel.x)) {
+                disturb = this.player.vel.y*20;
             }
             grass.initDisturb(disturb*.1);
             

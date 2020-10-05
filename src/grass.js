@@ -30,6 +30,7 @@ export default class Grass {
     initDisturb(drag) {
         this.disturbed = 1000;
         this.drag += drag;
+        this.drag = Math.max(Math.min(this.drag, 20), -20);
     }
 
     disturb(world) {
