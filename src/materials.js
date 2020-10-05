@@ -59,6 +59,8 @@ note2.flipY = false;
 const turtle = loader.load('./turtle.png');
 turtle.flipY = false;
 
+const gradient = loader.load('./gradient_black.png');
+gradient.flipY = false;
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
         map: dirtTexture,
@@ -162,19 +164,19 @@ export const spriteMaterials = {
     }),
     cloud1: new THREE.MeshBasicMaterial({
         transparent: true,
-        opacity: 1,
+        opacity: .8,
         map: cloud1,
         side: THREE.BackSide,
     }),
     cloud2: new THREE.MeshBasicMaterial({
         transparent: true,
-        opacity: 1,
+        opacity: .8,
         map: cloud2,
         side: THREE.BackSide,
     }),
     cloud3: new THREE.MeshBasicMaterial({
         transparent: true,
-        opacity: 1,
+        opacity: .8,
         map: cloud3,
         side: THREE.BackSide,
     }),
@@ -200,6 +202,12 @@ export const spriteMaterials = {
         transparent: true,
         opacity: 1,
         map: bird,
+        side: THREE.BackSide,
+    }),
+    gradient: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: gradient,
         side: THREE.BackSide,
     }),
 };

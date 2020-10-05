@@ -4,6 +4,9 @@ import Key from './key';
 import TextureAnimation from './texture-animation';
 import { BLOCK_WIDTH } from './constants';
 import { footstepSound } from './sounds';
+import { Mouse } from './mouse';
+import Particle from './particle';
+import { spriteMaterials } from './materials';
 
 const loader = new THREE.TextureLoader();
 
@@ -46,6 +49,11 @@ const CLIMB_STATE   = 3;
 
 const playerGeometry = new THREE.PlaneGeometry(30, 60);
 
+const noteColors = [
+    0xff0000, 0xff00ff, 0xffff00,
+    0x00ff00, 0x0000ff,
+]
+
 export default class Player {
     constructor(pos) {
         this.type = 'player';
@@ -84,6 +92,8 @@ export default class Player {
         this.wasGrounded = false;
         this.reset = false;
         this.swimming = false;
+
+        this.noteTimer = 0;
     }
 
     update(world, dt) {
@@ -152,6 +162,17 @@ export default class Player {
         this.sprites[this.currentState].mesh.position.set(this.pos.x, this.pos.y, 0);
         this.spriteAnimations[this.currentState].update(this.textures[this.currentState], dt, this.xDirection);
         world.scene.add(this.sprites[this.currentState].mesh);
+
+        if (Mouse.leftDown) {
+            this.noteTimer++;
+            if (this.noteTimer > 200) {
+                this.noteTimer = 0;
+                
+                let mat = spriteMaterials.note1.clone();
+                mat.color.set(noteColors[Math.floor(Math.random() * noteColors.length)]);
+                world.addEntity(new Particle(this.pos.clone().add(new THREE.Vector2(this.xDirection*10, -16)), new THREE.Vector2(this.xDirection, Math.random() * -.5), new THREE.Vector2(0, -.05), new THREE.Vector2(16, 16), 250, mat, null, 50, 1));
+            }
+        }
     }
 
     init(world) {

@@ -23,15 +23,18 @@ export default class Bird {
         this.code = code;
         this.codePos = 0;
         this.codeTimer = 0;
-        this.codeStart = 0;
+        this.codeStart = 1400;
         this.sprite = new Sprite(spriteMaterials.bird, geometry);
     }
 
     update(world, dt) {
         this.sprite.mesh.position.set(this.pos.x, this.pos.y+3, 0);
         let inRange = world.player.pos.clone().sub(this.pos).length() < 32*10;
-        if (this.codeStart < 3000 || !inRange) {
+        if (this.codeStart < 1500) {
             this.codeStart++;
+            if (!inRange) {
+                this.codeStart = Math.min(this.codeStart, 1490);
+            }
             return;
         }
         if (this.codeTimer < 600) {

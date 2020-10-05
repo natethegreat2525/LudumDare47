@@ -16,6 +16,7 @@ import Door from './door';
 import Grass from './grass';
 import Particle from './particle';
 import Bird from './bird';
+import Sky from './sky';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -156,6 +157,8 @@ export default class World {
                 }));
             }, 100);
         }, 3000);
+
+        this.addEntity(new Sky());
 
         setTimeout(() => {
             forestBackgroundSound.play();
