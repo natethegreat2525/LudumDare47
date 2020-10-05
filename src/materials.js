@@ -61,6 +61,9 @@ note2.flipY = false;
 const turtle = loader.load('./turtle.png');
 turtle.flipY = false;
 
+const reset = loader.load('./reset.png');
+reset.flipY = false;
+
 const gradient = loader.load('./gradient_black.png');
 gradient.flipY = false;
 export const spriteMaterials = {
@@ -217,6 +220,10 @@ export const spriteMaterials = {
         transparent: true,
         opacity: 1,
         map: gradient,
+        side: THREE.BackSide,
+    }),
+    reset: new THREE.MeshBasicMaterial({
+        map: reset,
         side: THREE.BackSide,
     }),
 };

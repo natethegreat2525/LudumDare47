@@ -190,6 +190,7 @@ export default class Player {
             if (this.grounded) {
                 
                 console.log('You win level', other.level);
+                this.winLevel = other.level;
                 this.reset = true;
             }
         }

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { smallMapGrid } from './map';
 import Sprite from './sprite';
 import Player from './player';
-import { Vector2 } from 'three';
+import { Vector2, Mesh, MeshBasicMaterial, PlaneGeometry } from 'three';
 import Button from './button';
 import ControlledBlock from './controlledblock';
 import Vine from './vine';
@@ -46,6 +46,10 @@ export default class World {
         this.entities = [];
         this.entityQueue = [];
         this.disturbedGrass = [];
+
+        this.resetSprite = new THREE.Mesh(new THREE.PlaneGeometry(73, 29), spriteMaterials.reset);
+        this.scene.add(this.resetSprite);
+
 
         this.addEntity(this.player);
 
@@ -238,7 +242,7 @@ export default class World {
         for (let entity of this.entities) {
             entity.update(this, dt);
 
-            if (entity.dynamic && entity.physics) {
+            if (entity.dynamic && entity.physics && !this.paused) {
                 entity.forces.y += GRAVITY;
                 entity.pos.add(entity.vel.clone().multiplyScalar(dt));
                 entity.vel.add(entity.forces.multiplyScalar(dt));
@@ -369,6 +373,8 @@ export default class World {
             camY = (this.height-1)*BLOCK_WIDTH - this.cameraHeight;
         }
         this.camera.position.set(camX, camY, 0);
+
+        this.resetSprite.position.set(36+camX, 14+camY, 800);
 
         let playerPos = this.player.pos.clone().divideScalar(BLOCK_WIDTH).floor();
         let grass = this.flowerGrid[playerPos.x + playerPos.y * this.width];
