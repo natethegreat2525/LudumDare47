@@ -105,6 +105,7 @@ export default class Player {
         }
         this.swimming = world.grid[blockPos.x + blockPos.y * world.width] === 'w';
 
+        this.pos.x = Math.min(Math.max(16, this.pos.x), 32*119.5);
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
             if (footstepSound.paused) {
                 footstepSound.play();
