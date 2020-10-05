@@ -15,6 +15,7 @@ import { forestBackgroundSound, whistleSound, mouseSound, stoneButtonSound } fro
 import Door from './door';
 import Grass from './grass';
 import Particle from './particle';
+import Bird from './bird';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -139,6 +140,8 @@ export default class World {
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 26.5, BLOCK_WIDTH*15.5)));
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 27.5, BLOCK_WIDTH*15.5)));
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 28.5, BLOCK_WIDTH*15.5)));
+
+        this.addEntity(new Bird(new THREE.Vector2(BLOCK_WIDTH * 74.5, BLOCK_WIDTH*14.5), this.code));
 
         setInterval(() => {
             this.addEntity(new Particle(new THREE.Vector2(43*32, 42*32), new THREE.Vector2(0, 0), new THREE.Vector2(0, 1), new THREE.Vector2(5, 5), 220, spriteMaterials.waterDrop, () => {

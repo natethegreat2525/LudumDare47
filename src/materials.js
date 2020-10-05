@@ -44,6 +44,21 @@ clickText.flipY = false;
 const bigTree = loader.load('./tree.png');
 bigTree.flipY = false;
 
+const cloud1 = loader.load('./cloud1.png');
+cloud1.flipY = false;
+const cloud2 = loader.load('./cloud2.png');
+cloud2.flipY = false;
+const cloud3 = loader.load('./cloud3.png');
+cloud3.flipY = false;
+const bird = loader.load('./bird.png');
+bird.flipY = false;
+const note1 = loader.load('./note1.png');
+note1.flipY = false;
+const note2 = loader.load('./note2.png');
+note2.flipY = false;
+const turtle = loader.load('./turtle.png');
+turtle.flipY = false;
+
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
         map: dirtTexture,
@@ -143,6 +158,48 @@ export const spriteMaterials = {
         transparent: true,
         opacity: .4,
         color: 0x0066ff,
+        side: THREE.BackSide,
+    }),
+    cloud1: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: cloud1,
+        side: THREE.BackSide,
+    }),
+    cloud2: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: cloud2,
+        side: THREE.BackSide,
+    }),
+    cloud3: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: cloud3,
+        side: THREE.BackSide,
+    }),
+    note1: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: note1,
+        side: THREE.BackSide,
+    }),
+    note2: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: note2,
+        side: THREE.BackSide,
+    }),
+    turtle: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: turtle,
+        side: THREE.BackSide,
+    }),
+    bird: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: bird,
         side: THREE.BackSide,
     }),
 };
