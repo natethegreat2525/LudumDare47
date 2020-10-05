@@ -27,6 +27,8 @@ const yellowFlower = loader.load('./yellow_flower.png');
 yellowFlower.flipY = false;
 const blueDoor = loader.load('./blue_door.png');
 blueDoor.flipY = false;
+const antiBlueDoor = loader.load('./anti_blue_door.png');
+antiBlueDoor.flipY = false;
 const redDoor = loader.load('./red_door.png');
 redDoor.flipY = false;
 const yellowDoor = loader.load('./yellow_door.png');
@@ -125,6 +127,11 @@ export const spriteMaterials = {
     blueDoor: new THREE.MeshBasicMaterial({
         transparent: true,
         map: blueDoor,
+        side: THREE.BackSide,
+    }),
+    antiBlueDoor: new THREE.MeshBasicMaterial({
+        transparent: true,
+        map: antiBlueDoor,
         side: THREE.BackSide,
     }),
     vine: new THREE.MeshBasicMaterial({

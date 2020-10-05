@@ -21,7 +21,7 @@ import Sky from './sky';
 export default class World {
     constructor(cwidth, cheight) {
         this.width = 120;
-        this.height = 80;
+        this.height = 82;
         this.grid = new Array(this.width*this.height);
         this.grid.fill(' ');
         this.flowerGrid = new Array(this.width*this.height);
@@ -35,6 +35,8 @@ export default class World {
         this.blueCrushed = false;
         this.redCrushed = false;
         this.yellowCrushed = false;
+        this.allBlueCrushed = false;
+        this.blueCount = 0;
 
         this.ticks = 0;
 
@@ -124,11 +126,52 @@ export default class World {
             return new THREE.Vector2(0, this.yellowCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.yellowCrushed)) : BLOCK_WIDTH*2);
         }, spriteMaterials.yellowDoor));
 
+        // anti-blue flower control door
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 113.5, BLOCK_WIDTH*33), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
+            return new THREE.Vector2(0, this.allBlueCrushed ? Math.min(BLOCK_WIDTH*2, .1*(this.ticks - this.allBlueCrushed)) : 0);
+        }, spriteMaterials.antiBlueDoor));
+
         // red flower control door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 18.5, BLOCK_WIDTH*30), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
             return new THREE.Vector2(0, this.redCrushed ? Math.max(0, BLOCK_WIDTH*2 - .1*(this.ticks - this.redCrushed)) : BLOCK_WIDTH*2);
         }, spriteMaterials.redDoor));
 
+
+        let makeMazeCrumble = (x, y) => {
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+.5), BLOCK_WIDTH*(y+.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+1.5), BLOCK_WIDTH*(y+.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+.5), BLOCK_WIDTH*(y+1.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+1.5), BLOCK_WIDTH*(y+1.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+4.5), BLOCK_WIDTH*(y+.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+5.5), BLOCK_WIDTH*(y+.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+4.5), BLOCK_WIDTH*(y+1.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+            this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (x+5.5), BLOCK_WIDTH*(y+1.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+        }
+        // left side maze l1
+        makeMazeCrumble(7, 31);
+        makeMazeCrumble(13, 46);
+        makeMazeCrumble(1, 52);
+        makeMazeCrumble(19, 59);
+
+        //center water chamber left secret
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (51.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (52.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+
+        //bottom mystery chamber visible
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (62.5), BLOCK_WIDTH * (73.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (63.5), BLOCK_WIDTH * (73.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (64.5), BLOCK_WIDTH * (73.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (65.5), BLOCK_WIDTH * (73.5))))
+
+        //bottom mystery chamber hidden
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (61.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (60.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (59.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (58.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (57.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (56.5), BLOCK_WIDTH * (67.5))))
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (55.5), BLOCK_WIDTH * (67.5))))
 
         this.loadMap();
 
@@ -381,7 +424,11 @@ export default class World {
             for (let x = 0; x < map2d[y].length; x++) {
                 let value = map2d[y][x];
                 if (!isNaN(parseInt(value))) {
-                    this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), parseInt(value)))
+                    this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), parseInt(value)));
+                } else if (value === 'A') {
+                    this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), 10));
+                } else if (value === 'B') {
+                    this.addEntity(new Door(new THREE.Vector2((x+.5)*BLOCK_WIDTH, (y+.28)*BLOCK_WIDTH), 11));
                 } else if (value === 's') {
                     this.player.pos.x = (x + .5)*BLOCK_WIDTH;
                     this.player.pos.y = (y + .5)*BLOCK_WIDTH;
@@ -398,6 +445,7 @@ export default class World {
                     this.scene.add(grass.flower.mesh);
                 } else if (value === 'b') {
                     //grass pseudo entity
+                    this.blueCount++;
                     let grass = new Grass(x, y, 'b');
                     this.flowerGrid[x + y*this.width] = grass;
                     this.scene.add(grass.sprite.mesh);

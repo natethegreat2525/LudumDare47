@@ -41,9 +41,16 @@ export default class Grass {
         this.geometry.verticesNeedUpdate = true;
 
         if (this.flower) {
+            let oldCrushed = this.crushed;
             this.crushed += Math.abs(this.drag)*.001;
             this.crushed = Math.min(1.5, this.crushed);
             if (this.crushed > 1) {
+                if (this.flowerType === 'b' && oldCrushed <= 1) {
+                    world.blueCount--;
+                    if (world.blueCount === 0) {
+                        world.allBlueCrushed = world.ticks;
+                    }
+                }
                 if (this.flowerType === 'r' && !world.redCrushed) {
                     world.redCrushed = world.ticks;
                 }
