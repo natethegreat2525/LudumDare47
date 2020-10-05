@@ -35,6 +35,7 @@ export default class Particle {
     }
 
     update(world, dt) {
+        dt = .1; //frame timing critical for some particles
         this.sprite.mesh.position.set(this.pos.x, this.pos.y, 0);
         this.pos.add(this.vel.clone().multiplyScalar(dt));
         this.vel.add(this.acc.clone().multiplyScalar(dt));

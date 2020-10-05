@@ -256,8 +256,9 @@ export default class World {
                 
                 for (let x = startX; x != endX; x += stepX) {
                     for (let y = startY; y != endY; y += stepY) {
-                        if (this.grid[x + y*this.width] !== ' ') {
-                            if (this.grid[x + y*this.width] == 't') {
+                        let gridValue = this.grid[x + y*this.width]
+                        if (gridValue !== ' ' && gridValue !== 'w') {
+                            if (gridValue === 't') {
                                 let diff = this.boxCollide(entity, new Vector2(x*BLOCK_WIDTH, y*BLOCK_WIDTH), new Vector2((x+1)*BLOCK_WIDTH, (y+1)*BLOCK_WIDTH));
                                 if (diff && entity.vel.y >= 0) {
                                     if (diff.y < 0) {
@@ -422,11 +423,13 @@ export default class World {
             for (let y = 0; y < this.height; y++) {
                 switch (this.grid[x + y * this.width]) {
                     case '#':
-                        this.addSpriteToGrid(new Sprite(spriteMaterials.dirt), x, y);
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.dirt), x, y, -1);
                         break;
                     case '-':
-                        this.addSpriteToGrid(new Sprite(spriteMaterials.grass), x, y);
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.grass), x, y, -1);
                         break;
+                    case 'w':
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.waterBlock), x, y, 1);
                     default:
                         break;
                 }
@@ -434,9 +437,9 @@ export default class World {
         }
     }
 
-    addSpriteToGrid(sprite, x, y) {
+    addSpriteToGrid(sprite, x, y, layer) {
         this.spriteGrid[x + y*this.width] = sprite;
-        sprite.mesh.position.set(x * BLOCK_WIDTH + BLOCK_WIDTH/2, y * BLOCK_WIDTH + BLOCK_WIDTH/2, -1);
+        sprite.mesh.position.set(x * BLOCK_WIDTH + BLOCK_WIDTH/2, y * BLOCK_WIDTH + BLOCK_WIDTH/2, layer);
         this.scene.add(sprite.mesh);
     }
 

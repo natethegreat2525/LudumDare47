@@ -139,4 +139,10 @@ export const spriteMaterials = {
         map: bigTree,
         side: THREE.BackSide,
     }),
+    waterBlock: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: .4,
+        color: 0x0066ff,
+        side: THREE.BackSide,
+    }),
 };

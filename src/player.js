@@ -83,29 +83,37 @@ export default class Player {
 
         this.wasGrounded = false;
         this.reset = false;
+        this.swimming = false;
     }
 
     update(world, dt) {
         world.scene.remove(this.sprites[this.currentState].mesh);
         this.currentState = IDLE_STATE;
+        let blockPos = this.pos.clone().divideScalar(BLOCK_WIDTH).floor();
         if (Math.random() > .997) {
-            console.log(this.pos.clone().divideScalar(BLOCK_WIDTH).floor());
+            console.log(blockPos);
         }
+        this.swimming = world.grid[blockPos.x + blockPos.y * world.width] === 'w';
+
         if ((this.vel.x !== 0 && this.grounded) || (!this.wasGrounded && this.grounded)) {
             if (footstepSound.paused) {
                 footstepSound.play();
             }
         }
         this.vel.x = 0;
+        if (this.swimming) {
+            this.forces.y = -1;
+            this.vel.y *= .98;
+        }
         if (Key.isDown(Key.RIGHT) || Key.isDown(Key.D)) {
-            this.vel.x = 4;
+            this.vel.x = this.swimming ? 2 : 4;
             this.xDirection = 1;
             if (this.currentState != JUMP_STATE) {
                 this.currentState = RUN_STATE;
             }
         }
         if (Key.isDown(Key.LEFT) || Key.isDown(Key.A)) {
-            this.vel.x = -4;
+            this.vel.x = this.swimming ? -2 : -4;
             this.xDirection = -1;
             if (this.currentState != JUMP_STATE) {
                 this.currentState = RUN_STATE;
@@ -121,6 +129,9 @@ export default class Player {
         if ((Key.isDown(Key.DOWN) || Key.isDown(Key.S)) && this.climbing) {
             this.vel.y = 2;
         }
+        if ((Key.isDown(Key.DOWN) || Key.isDown(Key.S)) && this.swimming) {
+            this.vel.y = 2;
+        }
         if (Key.isDown(Key.UP) || Key.isDown(Key.W)) {
             if (this.isOnVine) {
                 this.climbing = true;
@@ -131,6 +142,9 @@ export default class Player {
                 if (this.grounded && this.vel.y >= 0) {
                     this.vel.y = -14;
                 }
+            }
+            if (this.swimming) {
+                this.vel.y = -10;
             }
         }
         this.wasGrounded = this.grounded;
