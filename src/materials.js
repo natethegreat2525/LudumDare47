@@ -41,6 +41,8 @@ dirt5Tall.repeat.set(7,1);
 dirt5Tall.wrapS = THREE.RepeatWrapping;
 const clickText = loader.load('./click_text.png');
 clickText.flipY = false;
+const bigTree = loader.load('./tree.png');
+bigTree.flipY = false;
 
 export const spriteMaterials = {
     dirt: new THREE.MeshBasicMaterial({
@@ -129,6 +131,12 @@ export const spriteMaterials = {
         transparent: true,
         opacity: 1,
         map: clickText,
+        side: THREE.BackSide,
+    }),
+    bigTree: new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 1,
+        map: bigTree,
         side: THREE.BackSide,
     }),
 };

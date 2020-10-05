@@ -11,7 +11,7 @@ import { spriteMaterials } from './materials';
 import Foreground from './foregroundlayer';
 import { BLOCK_WIDTH, GRAVITY } from './constants';
 import { Mouse } from './mouse';
-import { forestBackgroundSound, whistleSound, mouseSound } from './sounds';
+import { forestBackgroundSound, whistleSound, mouseSound, stoneButtonSound } from './sounds';
 import Door from './door';
 import Grass from './grass';
 import Particle from './particle';
@@ -48,6 +48,35 @@ export default class World {
         this.addEntity(l2button);
         let l1button = new Button(new THREE.Vector2(BLOCK_WIDTH * 85.5, BLOCK_WIDTH*33.5), new THREE.Vector2(BLOCK_WIDTH*5, BLOCK_WIDTH));
         this.addEntity(l1button);
+
+        let codeButtons = []
+        for (let i = 0; i < 6; i++) {
+            codeButtons.push(new Button(new THREE.Vector2(BLOCK_WIDTH * (72 + i*6), BLOCK_WIDTH*5.5+2), new THREE.Vector2(BLOCK_WIDTH*2, BLOCK_WIDTH)));
+            this.addEntity(codeButtons[codeButtons.length-1]);
+        }
+        this.code = new Array(6);
+        this.code.fill(false);
+        for (let i = 0; i < 5; i++) {
+            let idx = Math.floor(Math.random()*6)
+            this.code[idx] = true;
+        }
+        console.log(this.code);
+        let codeSlider = 0;
+        this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 118, BLOCK_WIDTH*5.5), new THREE.Vector2(BLOCK_WIDTH*2, BLOCK_WIDTH*1), () => {
+            for (let i = 0; i < 6; i++) {
+                if ((codeButtons[i].offset > 16) !== (this.code[i])) {
+                    return new THREE.Vector2();
+                }
+            }
+            if (codeSlider < 64) {
+                if (codeSlider === 0) {
+                    //TODO maybe better sound here
+                    stoneButtonSound.play();
+                }
+                codeSlider+=.1
+            }
+            return new THREE.Vector2(codeSlider, 0);
+        }));
 
         // reveals level 1 door
         this.addEntity(new ControlledBlock(new THREE.Vector2(BLOCK_WIDTH * 92.5, BLOCK_WIDTH*33), new THREE.Vector2(BLOCK_WIDTH, BLOCK_WIDTH*2), () => {
@@ -103,7 +132,13 @@ export default class World {
 
         this.addEntity(new Foreground(this.width, this.height));
 
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 22.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 23.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 24.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 25.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 26.5, BLOCK_WIDTH*15.5)));
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 27.5, BLOCK_WIDTH*15.5)));
+        this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 28.5, BLOCK_WIDTH*15.5)));
 
         setInterval(() => {
             this.addEntity(new Particle(new THREE.Vector2(43*32, 42*32), new THREE.Vector2(0, 0), new THREE.Vector2(0, 1), new THREE.Vector2(5, 5), 220, spriteMaterials.waterDrop, () => {
@@ -122,6 +157,9 @@ export default class World {
         setTimeout(() => {
             forestBackgroundSound.play();
         }, 10000);
+        let tree = new Sprite(spriteMaterials.bigTree, new THREE.PlaneGeometry(702, 744));
+        tree.mesh.position.set(2525, 695, -10);
+        this.scene.add(tree.mesh);
     }
 
     addEntity(entity) {
