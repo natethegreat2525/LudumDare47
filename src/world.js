@@ -361,6 +361,9 @@ export default class World {
         if (this.player.pos.x > this.width*BLOCK_WIDTH - this.cameraWidth/2) {
             camX = this.width*BLOCK_WIDTH - this.cameraWidth;
         }
+        if (this.player.pos.y > (this.height-1)*BLOCK_WIDTH - this.cameraHeight/2) {
+            camY = (this.height-1)*BLOCK_WIDTH - this.cameraHeight;
+        }
         this.camera.position.set(camX, camY, 0);
 
         let playerPos = this.player.pos.clone().divideScalar(BLOCK_WIDTH).floor();
