@@ -108,8 +108,8 @@ export default class World {
 
 
         //grass crumble blocks
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5), spriteMaterials.grassCracked, spriteMaterials.grassCracked2));
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5), spriteMaterials.grassCracked, spriteMaterials.grassCracked2));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (32.5), BLOCK_WIDTH*36.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (33.5), BLOCK_WIDTH*36.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
 
         // behind level 4?
         this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (82.5), BLOCK_WIDTH*47.5), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
@@ -357,29 +357,19 @@ export default class World {
                 xDiff = xRad;
             }
             
-            
             if (Math.abs(xDiff) < xRad) {
                 if (xDiff > 0) {
                     return new THREE.Vector2(xRad - xDiff, 0)
-                    entity.pos.x -= xDiff - xRad;
-                    entity.vel.x = Math.max(0, entity.vel.x);
                 } else {
                     return new THREE.Vector2(-xRad - xDiff, 0)
-                    entity.pos.x -= xDiff + xRad;
-                    entity.vel.x = Math.min(0, entity.vel.x);
                 }
             }
             
             if (Math.abs(yDiff) < yRad) {
                 if (yDiff > 0) {
                     return new THREE.Vector2(0, yRad - yDiff);
-                    entity.pos.y -= yDiff - yRad;
-                    entity.vel.y = Math.max(0, entity.vel.y);
                 } else {
                     return new THREE.Vector2(0, -yRad - yDiff);
-                    entity.grounded = true;
-                    entity.pos.y -= yDiff + yRad;
-                    entity.vel.y = Math.min(0, entity.vel.y);
                 }
             }
         }
@@ -429,13 +419,13 @@ export default class World {
             for (let y = 0; y < this.height; y++) {
                 switch (this.grid[x + y * this.width]) {
                     case '#':
-                        this.addSpriteToGrid(new Sprite(spriteMaterials.dirt), x, y, -1);
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.dirt), x, y, -1, Math.floor(Math.random()*4));
                         break;
                     case '-':
-                        this.addSpriteToGrid(new Sprite(spriteMaterials.grass), x, y, -1);
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.grass), x, y, -1, 0);
                         break;
                     case 'w':
-                        this.addSpriteToGrid(new Sprite(spriteMaterials.waterBlock), x, y, 1);
+                        this.addSpriteToGrid(new Sprite(spriteMaterials.waterBlock), x, y, 1, 0);
                     default:
                         break;
                 }
@@ -443,10 +433,11 @@ export default class World {
         }
     }
 
-    addSpriteToGrid(sprite, x, y, layer) {
+    addSpriteToGrid(sprite, x, y, layer, rotate) {
         this.spriteGrid[x + y*this.width] = sprite;
         sprite.mesh.position.set(x * BLOCK_WIDTH + BLOCK_WIDTH/2, y * BLOCK_WIDTH + BLOCK_WIDTH/2, layer);
         this.scene.add(sprite.mesh);
+        sprite.mesh.rotateZ(rotate * Math.PI/2);
     }
 
     render(renderer) {

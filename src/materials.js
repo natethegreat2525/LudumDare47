@@ -75,11 +75,13 @@ export const spriteMaterials = {
         side: THREE.BackSide,
     }),
     dirtCracked: new THREE.MeshBasicMaterial({
+        transparent: true,
         map: dirtCrackedTexture,
         side: THREE.BackSide,
     }),
     dirtCracked2: new THREE.MeshBasicMaterial({
         map: dirtCrackedTexture2,
+        transparent: true,
         side: THREE.BackSide,
     }),
     grassCracked: new THREE.MeshBasicMaterial({
