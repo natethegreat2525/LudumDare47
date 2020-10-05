@@ -63,8 +63,12 @@ export default class Foreground {
             sprite.mesh.material.transparent = true;
             sprite.mesh.material.opacity = Math.max(0, op - .02);
             sprite.mesh.material.needsUpdate = true;
-            this.hideSprite(x-1, y, op);
-            this.hideSprite(x+1, y, op);
+            if (x != 56) {
+                this.hideSprite(x-1, y, op);
+            }
+            if (x != 55) {
+                this.hideSprite(x+1, y, op);
+            }
             this.hideSprite(x, y+1, op);
             this.hideSprite(x, y-1, op);
         }

@@ -17,6 +17,7 @@ import Grass from './grass';
 import Particle from './particle';
 import Bird from './bird';
 import Sky from './sky';
+import Turtle from './turtle';
 
 export default class World {
     constructor(cwidth, cheight) {
@@ -155,8 +156,8 @@ export default class World {
         makeMazeCrumble(19, 59);
 
         //center water chamber left secret
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (51.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
-        this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (52.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+        //this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (51.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
+        //this.addEntity(new CrumbleBlock(new THREE.Vector2(BLOCK_WIDTH * (52.5), BLOCK_WIDTH*(45.5)), spriteMaterials.dirtCracked, spriteMaterials.dirtCracked2));
 
         //bottom mystery chamber visible
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * (62.5), BLOCK_WIDTH * (73.5))))
@@ -186,6 +187,9 @@ export default class World {
         this.addEntity(new Vine(new THREE.Vector2(BLOCK_WIDTH * 28.5, BLOCK_WIDTH*15.5)));
 
         this.addEntity(new Bird(new THREE.Vector2(BLOCK_WIDTH * 74.5, BLOCK_WIDTH*14.5), this.code));
+
+
+        this.addEntity(new Turtle(new THREE.Vector2(BLOCK_WIDTH * 65.5, BLOCK_WIDTH*51.5)));
 
         setInterval(() => {
             this.addEntity(new Particle(new THREE.Vector2(43*32, 42*32), new THREE.Vector2(0, 0), new THREE.Vector2(0, 1), new THREE.Vector2(5, 5), 220, spriteMaterials.waterDrop, () => {
